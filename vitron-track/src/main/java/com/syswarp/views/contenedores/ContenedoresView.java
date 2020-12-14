@@ -34,12 +34,14 @@ public class ContenedoresView extends Div {
 
     private Grid<Contenedores> grid = new Grid<>(Contenedores.class, false);
 
-    private TextField idcontenedor;
+    //private TextField idcontenedor;
     private TextField contenedor;
     private TextField tagid;
+    
+    private TextField filtro = new  TextField("Buscar ocurrencia...");
 
-    private Button cancel = new Button("Cancel");
-    private Button save = new Button("Save");
+    private Button cancel = new Button("Cancelar");
+    private Button save = new Button("Guardar");
 
     private BeanValidationBinder<Contenedores> binder;
 
@@ -57,11 +59,15 @@ public class ContenedoresView extends Div {
         add(splitLayout);
 
         // Configure Grid
-        grid.addColumn("idcontenedor").setAutoWidth(true);
+       // grid.addColumn("idcontenedor").setAutoWidth(true);
+        grid.addColumn("id").setHeader("Codigo").setWidth("100px") ;  //.setAutoWidth(true);
+        
         grid.addColumn("contenedor").setAutoWidth(true);
         grid.addColumn("tagid").setAutoWidth(true);
         grid.setDataProvider(new CrudServiceDataProvider<>(contenedoresService));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+        
+        
         grid.setHeightFull();
 
         // when a row is selected or deselected, populate form
@@ -83,8 +89,7 @@ public class ContenedoresView extends Div {
         binder = new BeanValidationBinder<>(Contenedores.class);
 
         // Bind fields. This where you'd define e.g. validation rules
-        binder.forField(idcontenedor).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
-                .bind("idcontenedor");
+      //  binder.forField(idcontenedor).withConverter(new StringToIntegerConverter("Only numbers are allowed")).bind("idcontenedor");
 
         binder.bindInstanceFields(this);
 
@@ -103,9 +108,9 @@ public class ContenedoresView extends Div {
                 contenedoresService.update(this.contenedores);
                 clearForm();
                 refreshGrid();
-                Notification.show("Contenedores details stored.");
+                Notification.show("Contenedor actualizado correctamente ");
             } catch (ValidationException validationException) {
-                Notification.show("An exception happened while trying to store the contenedores details.");
+                Notification.show("Ocurrio una excepcion mientras se intentaba actualizar Contenedores");
             }
         });
 
@@ -120,10 +125,11 @@ public class ContenedoresView extends Div {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        idcontenedor = new TextField("Idcontenedor");
+       // idcontenedor = new TextField("Idcontenedor");
         contenedor = new TextField("Contenedor");
         tagid = new TextField("Tagid");
-        Component[] fields = new Component[]{idcontenedor, contenedor, tagid};
+       // Component[] fields = new Component[]{idcontenedor, contenedor, tagid};
+        Component[] fields = new Component[]{ contenedor, tagid};
 
         for (Component field : fields) {
             ((HasStyle) field).addClassName("full-width");
@@ -151,7 +157,9 @@ public class ContenedoresView extends Div {
         wrapper.setId("grid-wrapper");
         wrapper.setWidthFull();
         splitLayout.addToPrimary(wrapper);
+      //  wrapper.add(filtro);
         wrapper.add(grid);
+      
     }
 
     private void refreshGrid() {

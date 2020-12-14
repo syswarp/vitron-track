@@ -39,11 +39,11 @@ public class DataGenerator {
 
             logger.info("Generating demo data");
 
+            
             logger.info("... generating 100 Contenedores entities...");
             ExampleDataGenerator<Contenedores> contenedoresRepositoryGenerator = new ExampleDataGenerator<>(
                     Contenedores.class);
             contenedoresRepositoryGenerator.setData(Contenedores::setId, DataType.ID);
-            contenedoresRepositoryGenerator.setData(Contenedores::setIdcontenedor, DataType.NUMBER_UP_TO_100);
             contenedoresRepositoryGenerator.setData(Contenedores::setContenedor, DataType.WORD);
             contenedoresRepositoryGenerator.setData(Contenedores::setTagid, DataType.WORD);
             contenedoresRepository.saveAll(contenedoresRepositoryGenerator.create(100, seed));
@@ -51,7 +51,9 @@ public class DataGenerator {
             logger.info("... generating 100 Medios entities...");
             ExampleDataGenerator<Medios> mediosRepositoryGenerator = new ExampleDataGenerator<>(Medios.class);
             mediosRepositoryGenerator.setData(Medios::setId, DataType.ID);
-            mediosRepositoryGenerator.setData(Medios::setIdmedio, DataType.NUMBER_UP_TO_100);
+           
+            //mediosRepositoryGenerator.setData(Medios::setIdmedio, DataType.NUMBER_UP_TO_100);
+            
             mediosRepositoryGenerator.setData(Medios::setMedio, DataType.WORD);
             mediosRepository.saveAll(mediosRepositoryGenerator.create(100, seed));
 
@@ -59,8 +61,8 @@ public class DataGenerator {
             ExampleDataGenerator<Multiplicaciones> multiplicacionesRepositoryGenerator = new ExampleDataGenerator<>(
                     Multiplicaciones.class);
             multiplicacionesRepositoryGenerator.setData(Multiplicaciones::setId, DataType.ID);
-            multiplicacionesRepositoryGenerator.setData(Multiplicaciones::setIdmultiplicacion,
-                    DataType.NUMBER_UP_TO_100);
+           // multiplicacionesRepositoryGenerator.setData(Multiplicaciones::setIdmultiplicacion,
+             //       DataType.NUMBER_UP_TO_100);
             multiplicacionesRepositoryGenerator.setData(Multiplicaciones::setIdmultiplicacion_padre,
                     DataType.NUMBER_UP_TO_100);
             multiplicacionesRepository.saveAll(multiplicacionesRepositoryGenerator.create(100, seed));
@@ -68,7 +70,6 @@ public class DataGenerator {
             logger.info("... generating 100 Operarios entities...");
             ExampleDataGenerator<Operarios> operariosRepositoryGenerator = new ExampleDataGenerator<>(Operarios.class);
             operariosRepositoryGenerator.setData(Operarios::setId, DataType.ID);
-            operariosRepositoryGenerator.setData(Operarios::setIdoperario, DataType.NUMBER_UP_TO_100);
             operariosRepositoryGenerator.setData(Operarios::setOperario, DataType.WORD);
             operariosRepositoryGenerator.setData(Operarios::setUsuario, DataType.WORD);
             operariosRepositoryGenerator.setData(Operarios::setClave, DataType.WORD);
@@ -79,7 +80,7 @@ public class DataGenerator {
             ExampleDataGenerator<Variedades> variedadesRepositoryGenerator = new ExampleDataGenerator<>(
                     Variedades.class);
             variedadesRepositoryGenerator.setData(Variedades::setId, DataType.ID);
-            variedadesRepositoryGenerator.setData(Variedades::setIdvariedad, DataType.NUMBER_UP_TO_100);
+           // variedadesRepositoryGenerator.setData(Variedades::setIdvariedad, DataType.NUMBER_UP_TO_100);
             variedadesRepositoryGenerator.setData(Variedades::setVariedad, DataType.WORD);
             variedadesRepository.saveAll(variedadesRepositoryGenerator.create(100, seed));
 
@@ -87,7 +88,7 @@ public class DataGenerator {
             ExampleDataGenerator<Operaciones> operacionesRepositoryGenerator = new ExampleDataGenerator<>(
                     Operaciones.class);
             operacionesRepositoryGenerator.setData(Operaciones::setId, DataType.ID);
-            operacionesRepositoryGenerator.setData(Operaciones::setIdoperacion, DataType.NUMBER_UP_TO_100);
+          //  operacionesRepositoryGenerator.setData(Operaciones::setIdoperacion, DataType.NUMBER_UP_TO_100);
             operacionesRepositoryGenerator.setData(Operaciones::setFecha, DataType.DATE_OF_BIRTH);
             operacionesRepositoryGenerator.setData(Operaciones::setIdcontenedor, DataType.NUMBER_UP_TO_100);
             operacionesRepositoryGenerator.setData(Operaciones::setIdvariedad, DataType.NUMBER_UP_TO_100);

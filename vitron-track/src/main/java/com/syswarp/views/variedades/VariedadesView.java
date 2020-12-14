@@ -34,11 +34,11 @@ public class VariedadesView extends Div {
 
     private Grid<Variedades> grid = new Grid<>(Variedades.class, false);
 
-    private TextField idvariedad;
+  //  private TextField idvariedad;
     private TextField variedad;
 
-    private Button cancel = new Button("Cancel");
-    private Button save = new Button("Save");
+    private Button cancel = new Button("Cancelar");
+    private Button save = new Button("Guardar");
 
     private BeanValidationBinder<Variedades> binder;
 
@@ -56,7 +56,8 @@ public class VariedadesView extends Div {
         add(splitLayout);
 
         // Configure Grid
-        grid.addColumn("idvariedad").setAutoWidth(true);
+//        grid.addColumn("idvariedad").setAutoWidth(true);
+        grid.addColumn("id").setHeader("Codigo").setWidth("100px") ;  //.setAutoWidth(true);
         grid.addColumn("variedad").setAutoWidth(true);
         grid.setDataProvider(new CrudServiceDataProvider<>(variedadesService));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -81,8 +82,8 @@ public class VariedadesView extends Div {
         binder = new BeanValidationBinder<>(Variedades.class);
 
         // Bind fields. This where you'd define e.g. validation rules
-        binder.forField(idvariedad).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
-                .bind("idvariedad");
+  //      binder.forField(idvariedad).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
+  //              .bind("idvariedad");
 
         binder.bindInstanceFields(this);
 
@@ -101,9 +102,9 @@ public class VariedadesView extends Div {
                 variedadesService.update(this.variedades);
                 clearForm();
                 refreshGrid();
-                Notification.show("Variedades details stored.");
+                Notification.show("Variedades actualizado correctamente.");
             } catch (ValidationException validationException) {
-                Notification.show("An exception happened while trying to store the variedades details.");
+                Notification.show("Ocurrio una excepcion mientras se intentaba actualizar Variedades.");
             }
         });
 
@@ -118,9 +119,9 @@ public class VariedadesView extends Div {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        idvariedad = new TextField("Idvariedad");
+//        idvariedad = new TextField("Idvariedad");
         variedad = new TextField("Variedad");
-        Component[] fields = new Component[]{idvariedad, variedad};
+        Component[] fields = new Component[]{ variedad};
 
         for (Component field : fields) {
             ((HasStyle) field).addClassName("full-width");

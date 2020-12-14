@@ -4,11 +4,12 @@ import javax.persistence.Entity;
 
 import com.syswarp.data.AbstractEntity;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 public class Operaciones extends AbstractEntity {
 
-    private Integer idoperacion;
+   // private Integer idoperacion;
     private LocalDate fecha;
     private Integer idcontenedor;
     private Integer idvariedad;
@@ -16,13 +17,13 @@ public class Operaciones extends AbstractEntity {
     private Integer idmultiplicacion;
     private Integer idmedio;
     private String observaciones;
+// todo aca no van aparentemente metodos de constraint    
+    private String usuarioalt;
+	private String usuarioact;
+    private Date fechaalt;
+    private Date fechaact;
 
-    public Integer getIdoperacion() {
-        return idoperacion;
-    }
-    public void setIdoperacion(Integer idoperacion) {
-        this.idoperacion = idoperacion;
-    }
+
     public LocalDate getFecha() {
         return fecha;
     }
@@ -66,4 +67,30 @@ public class Operaciones extends AbstractEntity {
         this.observaciones = observaciones;
     }
 
+    public String getUsuarioalt() {
+		return usuarioalt;
+	}
+	public void setUsuarioalt(String usuarioalt) {
+		this.usuarioalt = usuarioalt;
+	}
+	public String getUsuarioact() {
+		return usuarioact;
+	}
+	public void setUsuarioact(String usuarioact) {
+		this.usuarioact = usuarioact;
+	}
+	public Date getFechaalt() {
+		return fechaalt;
+	}
+	public void setFechaalt(Date fechaalt) {
+		this.fechaalt = fechaalt;
+	}
+	public Date getFechaact() {
+		return fechaact;
+	}
+	public void setFechaact(Date fechaact) {
+		this.fechaact = fechaact;
+	}
+
+    
 }

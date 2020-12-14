@@ -89,12 +89,13 @@ public class MainView extends AppLayout {
     private Component[] createMenuItems() {
         return new Tab[]
         		{        	    
-                createTab("Medios", MediosView.class), 
+        	    createTab("Contenedores", ContenedoresView.class),
+
+        	    createTab("Medios", MediosView.class), 
                 createTab("Multiplicaciones", MultiplicacionesView.class),
                 createTab("Operarios", OperariosView.class), 
                 createTab("Variedades", VariedadesView.class),
                 createTab("Producciones", OperacionesView.class),
-                createTab("Contenedores", ContenedoresView.class),
                 createTab("Acerca de:", AcercadeView.class)
              };
     }

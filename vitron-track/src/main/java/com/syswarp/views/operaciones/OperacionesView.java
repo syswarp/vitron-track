@@ -35,7 +35,7 @@ public class OperacionesView extends Div {
 
     private Grid<Operaciones> grid = new Grid<>(Operaciones.class, false);
 
-    private TextField idoperacion;
+  //  private TextField idoperacion;
     private DatePicker fecha;
     private TextField idcontenedor;
     private TextField idvariedad;
@@ -63,7 +63,7 @@ public class OperacionesView extends Div {
         add(splitLayout);
 
         // Configure Grid
-        grid.addColumn("idoperacion").setAutoWidth(true);
+      //  grid.addColumn("idoperacion").setAutoWidth(true);
         grid.addColumn("fecha").setAutoWidth(true);
         grid.addColumn("idcontenedor").setAutoWidth(true);
         grid.addColumn("idvariedad").setAutoWidth(true);
@@ -94,8 +94,6 @@ public class OperacionesView extends Div {
         binder = new BeanValidationBinder<>(Operaciones.class);
 
         // Bind fields. This where you'd define e.g. validation rules
-        binder.forField(idoperacion).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
-                .bind("idoperacion");
         binder.forField(idcontenedor).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
                 .bind("idcontenedor");
         binder.forField(idvariedad).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
@@ -141,7 +139,7 @@ public class OperacionesView extends Div {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        idoperacion = new TextField("Idoperacion");
+//        idoperacion = new TextField("Idoperacion");
         fecha = new DatePicker("Fecha");
         idcontenedor = new TextField("Idcontenedor");
         idvariedad = new TextField("Idvariedad");
@@ -149,7 +147,7 @@ public class OperacionesView extends Div {
         idmultiplicacion = new TextField("Idmultiplicacion");
         idmedio = new TextField("Idmedio");
         observaciones = new TextField("Observaciones");
-        Component[] fields = new Component[]{idoperacion, fecha, idcontenedor, idvariedad, idoperario, idmultiplicacion,
+        Component[] fields = new Component[]{ fecha, idcontenedor, idvariedad, idoperario, idmultiplicacion,
                 idmedio, observaciones};
 
         for (Component field : fields) {

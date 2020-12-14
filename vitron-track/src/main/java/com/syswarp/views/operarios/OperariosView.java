@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import com.syswarp.views.main.MainView;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 
 @Route(value = "operarios", layout = MainView.class)
@@ -34,14 +35,13 @@ public class OperariosView extends Div {
 
     private Grid<Operarios> grid = new Grid<>(Operarios.class, false);
 
-    private TextField idoperario;
     private TextField operario;
     private TextField usuario;
-    private TextField clave;
+    private PasswordField   clave;
     private TextField esadmin;
 
-    private Button cancel = new Button("Cancel");
-    private Button save = new Button("Save");
+    private Button cancel = new Button("Cancelar");
+    private Button save = new Button("Guardar");
 
     private BeanValidationBinder<Operarios> binder;
 
@@ -59,10 +59,10 @@ public class OperariosView extends Div {
         add(splitLayout);
 
         // Configure Grid
-        grid.addColumn("idoperario").setAutoWidth(true);
+        grid.addColumn("id").setHeader("Codigo").setWidth("100px") ;  //.setAutoWidth(true);
         grid.addColumn("operario").setAutoWidth(true);
         grid.addColumn("usuario").setAutoWidth(true);
-        grid.addColumn("clave").setAutoWidth(true);
+      //  grid.addColumn("clave").setAutoWidth(true);
         grid.addColumn("esadmin").setAutoWidth(true);
         grid.setDataProvider(new CrudServiceDataProvider<>(operariosService));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -87,8 +87,6 @@ public class OperariosView extends Div {
         binder = new BeanValidationBinder<>(Operarios.class);
 
         // Bind fields. This where you'd define e.g. validation rules
-        binder.forField(idoperario).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
-                .bind("idoperario");
 
         binder.bindInstanceFields(this);
 
@@ -107,9 +105,9 @@ public class OperariosView extends Div {
                 operariosService.update(this.operarios);
                 clearForm();
                 refreshGrid();
-                Notification.show("Operarios details stored.");
+                Notification.show("Operarios actualizado correctamente.");
             } catch (ValidationException validationException) {
-                Notification.show("An exception happened while trying to store the operarios details.");
+                Notification.show("Ocurrio una excepcion mientras se intentaba actualizar Operarios.");
             }
         });
 
@@ -124,12 +122,11 @@ public class OperariosView extends Div {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        idoperario = new TextField("Idoperario");
         operario = new TextField("Operario");
         usuario = new TextField("Usuario");
-        clave = new TextField("Clave");
+        clave = new PasswordField("Clave");
         esadmin = new TextField("Esadmin");
-        Component[] fields = new Component[]{idoperario, operario, usuario, clave, esadmin};
+        Component[] fields = new Component[]{ operario, usuario, clave, esadmin};
 
         for (Component field : fields) {
             ((HasStyle) field).addClassName("full-width");

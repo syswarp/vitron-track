@@ -34,11 +34,10 @@ public class MultiplicacionesView extends Div {
 
     private Grid<Multiplicaciones> grid = new Grid<>(Multiplicaciones.class, false);
 
-    private TextField idmultiplicacion;
     private TextField idmultiplicacion_padre;
 
-    private Button cancel = new Button("Cancel");
-    private Button save = new Button("Save");
+    private Button cancel = new Button("Cancelar");
+    private Button save = new Button("Guardar");
 
     private BeanValidationBinder<Multiplicaciones> binder;
 
@@ -56,8 +55,9 @@ public class MultiplicacionesView extends Div {
         add(splitLayout);
 
         // Configure Grid
-        grid.addColumn("idmultiplicacion").setAutoWidth(true);
-        grid.addColumn("idmultiplicacion_padre").setAutoWidth(true);
+        grid.addColumn("id").setHeader("Codigo").setWidth("100px") ;  //.setAutoWidth(true);
+
+        grid.addColumn("idmultiplicacion_padre").setAutoWidth(true).setHeader("Cod. Multiplicacion Padre");
         grid.setDataProvider(new CrudServiceDataProvider<>(multiplicacionesService));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.setHeightFull();
@@ -82,9 +82,7 @@ public class MultiplicacionesView extends Div {
         binder = new BeanValidationBinder<>(Multiplicaciones.class);
 
         // Bind fields. This where you'd define e.g. validation rules
-        binder.forField(idmultiplicacion).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
-                .bind("idmultiplicacion");
-        binder.forField(idmultiplicacion_padre).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
+        binder.forField(idmultiplicacion_padre).withConverter(new StringToIntegerConverter("Solo se aceptan valores numero"))
                 .bind("idmultiplicacion_padre");
 
         binder.bindInstanceFields(this);
@@ -104,9 +102,9 @@ public class MultiplicacionesView extends Div {
                 multiplicacionesService.update(this.multiplicaciones);
                 clearForm();
                 refreshGrid();
-                Notification.show("Multiplicaciones details stored.");
+                Notification.show("Multiplicaciones actualizado correctamente.");
             } catch (ValidationException validationException) {
-                Notification.show("An exception happened while trying to store the multiplicaciones details.");
+                Notification.show("Ocurrio una excepcion mientras se intentaba actualizar Multiplicaciones.");
             }
         });
 
@@ -121,9 +119,9 @@ public class MultiplicacionesView extends Div {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        idmultiplicacion = new TextField("Idmultiplicacion");
-        idmultiplicacion_padre = new TextField("Idmultiplicacion_padre");
-        Component[] fields = new Component[]{idmultiplicacion, idmultiplicacion_padre};
+ //       idmultiplicacion = new TextField("Idmultiplicacion");
+        idmultiplicacion_padre = new TextField("Cod. Mult. (Padre)");
+        Component[] fields = new Component[]{idmultiplicacion_padre};
 
         for (Component field : fields) {
             ((HasStyle) field).addClassName("full-width");

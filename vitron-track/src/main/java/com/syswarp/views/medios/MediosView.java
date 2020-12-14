@@ -34,11 +34,11 @@ public class MediosView extends Div {
 
     private Grid<Medios> grid = new Grid<>(Medios.class, false);
 
-    private TextField idmedio;
+   // private TextField idmedio;
     private TextField medio;
 
-    private Button cancel = new Button("Cancel");
-    private Button save = new Button("Save");
+    private Button cancel = new Button("Cancelar");
+    private Button save = new Button("Guardar");
 
     private BeanValidationBinder<Medios> binder;
 
@@ -56,7 +56,8 @@ public class MediosView extends Div {
         add(splitLayout);
 
         // Configure Grid
-        grid.addColumn("idmedio").setAutoWidth(true);
+       // grid.addColumn("idmedio").setAutoWidth(true);
+        grid.addColumn("id").setHeader("Codigo").setWidth("100px") ;  //.setAutoWidth(true);
         grid.addColumn("medio").setAutoWidth(true);
         grid.setDataProvider(new CrudServiceDataProvider<>(mediosService));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -81,9 +82,7 @@ public class MediosView extends Div {
         binder = new BeanValidationBinder<>(Medios.class);
 
         // Bind fields. This where you'd define e.g. validation rules
-        binder.forField(idmedio).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
-                .bind("idmedio");
-
+ 
         binder.bindInstanceFields(this);
 
         cancel.addClickListener(e -> {
@@ -101,9 +100,9 @@ public class MediosView extends Div {
                 mediosService.update(this.medios);
                 clearForm();
                 refreshGrid();
-                Notification.show("Medios details stored.");
+                Notification.show("Medios actualizado correctamente.");
             } catch (ValidationException validationException) {
-                Notification.show("An exception happened while trying to store the medios details.");
+                Notification.show("Ocurrio un error mientras se intentaba actualizar Medios.");
             }
         });
 
@@ -118,9 +117,8 @@ public class MediosView extends Div {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        idmedio = new TextField("Idmedio");
         medio = new TextField("Medio");
-        Component[] fields = new Component[]{idmedio, medio};
+        Component[] fields = new Component[]{ medio};
 
         for (Component field : fields) {
             ((HasStyle) field).addClassName("full-width");
