@@ -11,9 +11,11 @@ import java.time.LocalDate;
 public class OperacionesService extends CrudService<Operaciones, Integer> {
 
     private OperacionesRepository repository;
-
-    public OperacionesService(@Autowired OperacionesRepository repository) {
+    private ContenedoresRepository contenedoresRepository;
+    @Autowired 
+    public OperacionesService(OperacionesRepository repository,ContenedoresRepository contenedoresRepository ) {
         this.repository = repository;
+        this.contenedoresRepository = contenedoresRepository;
     }
 
     @Override

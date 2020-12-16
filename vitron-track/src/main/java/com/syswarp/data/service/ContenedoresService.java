@@ -10,14 +10,19 @@ import org.vaadin.artur.helpers.CrudService;
 public class ContenedoresService extends CrudService<Contenedores, Integer> {
 
     private ContenedoresRepository repository;
-
-    public ContenedoresService(@Autowired ContenedoresRepository repository) {
+    private OperacionesRepository  operacionesRepository;
+    @Autowired
+    public ContenedoresService( ContenedoresRepository repository,OperacionesRepository  operacionesRepository ) {
         this.repository = repository;
+        this.operacionesRepository = operacionesRepository;
     }
 
     @Override
     protected ContenedoresRepository getRepository() {
         return repository;
     }
+    
+    
+    
 
 }

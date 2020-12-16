@@ -90,7 +90,7 @@ public class DataGenerator {
             operacionesRepositoryGenerator.setData(Operaciones::setId, DataType.ID);
           //  operacionesRepositoryGenerator.setData(Operaciones::setIdoperacion, DataType.NUMBER_UP_TO_100);
             operacionesRepositoryGenerator.setData(Operaciones::setFecha, DataType.DATE_OF_BIRTH);
-            operacionesRepositoryGenerator.setData(Operaciones::setIdcontenedor, DataType.NUMBER_UP_TO_100);
+          //  operacionesRepositoryGenerator.setData(Operaciones::setIdcontenedor, DataType.NUMBER_UP_TO_100);
             operacionesRepositoryGenerator.setData(Operaciones::setIdvariedad, DataType.NUMBER_UP_TO_100);
             operacionesRepositoryGenerator.setData(Operaciones::setIdoperario, DataType.NUMBER_UP_TO_100);
             operacionesRepositoryGenerator.setData(Operaciones::setIdmultiplicacion, DataType.NUMBER_UP_TO_100);

@@ -1,13 +1,20 @@
 package com.syswarp.views.operaciones;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.syswarp.data.entity.Contenedores;
+import com.syswarp.data.entity.Medios;
+import com.syswarp.data.entity.Multiplicaciones;
 import com.syswarp.data.entity.Operaciones;
+import com.syswarp.data.entity.Operarios;
+import com.syswarp.data.entity.Variedades;
 import com.syswarp.data.service.OperacionesService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -20,6 +27,7 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
@@ -37,15 +45,17 @@ public class OperacionesView extends Div {
 
   //  private TextField idoperacion;
     private DatePicker fecha;
-    private TextField idcontenedor;
-    private TextField idvariedad;
-    private TextField idoperario;
-    private TextField idmultiplicacion;
-    private TextField idmedio;
+   // private TextField idcontenedor;
+    
+    private ComboBox<Contenedores> contenedores;
+    private ComboBox<Variedades>  idvariedad;
+    private ComboBox<Operarios> idoperario;
+    private ComboBox<Multiplicaciones> idmultiplicacion;
+    private ComboBox<Medios> idmedio;
     private TextField observaciones;
 
-    private Button cancel = new Button("Cancel");
-    private Button save = new Button("Save");
+    private Button cancel = new Button("Cancelar");
+    private Button save = new Button("Guardar");
 
     private BeanValidationBinder<Operaciones> binder;
 
@@ -65,7 +75,11 @@ public class OperacionesView extends Div {
         // Configure Grid
       //  grid.addColumn("idoperacion").setAutoWidth(true);
         grid.addColumn("fecha").setAutoWidth(true);
-        grid.addColumn("idcontenedor").setAutoWidth(true);
+        
+        
+        //grid.addColumn(this::FKContenedor).setAutoWidth(true);
+        
+        //grid.addColumn("idcontenedor").setAutoWidth(true);
         grid.addColumn("idvariedad").setAutoWidth(true);
         grid.addColumn("idoperario").setAutoWidth(true);
         grid.addColumn("idmultiplicacion").setAutoWidth(true);
@@ -94,16 +108,13 @@ public class OperacionesView extends Div {
         binder = new BeanValidationBinder<>(Operaciones.class);
 
         // Bind fields. This where you'd define e.g. validation rules
-        binder.forField(idcontenedor).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
-                .bind("idcontenedor");
-        binder.forField(idvariedad).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
-                .bind("idvariedad");
-        binder.forField(idoperario).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
-                .bind("idoperario");
-        binder.forField(idmultiplicacion).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
-                .bind("idmultiplicacion");
-        binder.forField(idmedio).withConverter(new StringToIntegerConverter("Only numbers are allowed"))
-                .bind("idmedio");
+        //binder.forField(idcontenedor).bind("idcontenedor");
+        binder.forField(idvariedad).bind("idvariedad");
+        binder.forField(idoperario).bind("idoperario");
+        binder.forField(idmultiplicacion).bind("idmultiplicacion");
+        binder.forField(idmedio).bind("idmedio");
+        
+        
 
         binder.bindInstanceFields(this);
 
@@ -141,13 +152,13 @@ public class OperacionesView extends Div {
         FormLayout formLayout = new FormLayout();
 //        idoperacion = new TextField("Idoperacion");
         fecha = new DatePicker("Fecha");
-        idcontenedor = new TextField("Idcontenedor");
-        idvariedad = new TextField("Idvariedad");
-        idoperario = new TextField("Idoperario");
-        idmultiplicacion = new TextField("Idmultiplicacion");
-        idmedio = new TextField("Idmedio");
+        contenedores = new ComboBox("Contenedor");
+        idvariedad = new ComboBox("Variedad");
+        idoperario = new ComboBox("Operario");
+        idmultiplicacion = new ComboBox("Multiplicacion");
+        idmedio = new ComboBox("Medio");
         observaciones = new TextField("Observaciones");
-        Component[] fields = new Component[]{ fecha, idcontenedor, idvariedad, idoperario, idmultiplicacion,
+        Component[] fields = new Component[]{ fecha, contenedores, idvariedad, idoperario, idmultiplicacion,
                 idmedio, observaciones};
 
         for (Component field : fields) {
@@ -190,7 +201,13 @@ public class OperacionesView extends Div {
 
     private void populateForm(Operaciones value) {
         this.operaciones = value;
+        
         binder.readBean(this.operaciones);
 
     }
+    
+    private String FKContenedor(Operaciones op) {
+        return op.getContenedores().getContenedor();
+     }
+ 
 }

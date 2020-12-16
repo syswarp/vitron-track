@@ -1,6 +1,9 @@
 package com.syswarp.data.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -9,6 +12,7 @@ import java.util.Set;
 import com.syswarp.data.AbstractEntity;
 
 @Entity
+@Table(name = "contenedores")
 public class Contenedores extends AbstractEntity {
 
     //private Integer idcontenedor;
@@ -25,10 +29,13 @@ public class Contenedores extends AbstractEntity {
    // TODO: Las contraints 
    // private Set operacioneses = new HashSet(0);
 
+    @OneToMany(mappedBy = "contenedores", cascade = CascadeType.ALL)
+    private Set<Contenedores> contenedores = new HashSet<>(); 
+    
     
 
 
-    public String getContenedor() {
+	public String getContenedor() {
         return contenedor;
     }
 	public void setContenedor(String contenedor) {
@@ -66,5 +73,14 @@ public class Contenedores extends AbstractEntity {
 	public void setFechaact(Date fechaact) {
 		this.fechaact = fechaact;
 	}
-    
+
+	
+    public Set<Contenedores> getContenedores() {
+		return contenedores;
+	}
+	public void setContenedores(Set<Contenedores> contenedores) {
+		this.contenedores = contenedores;
+	}
+
+	
 }
