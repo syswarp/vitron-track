@@ -2,6 +2,8 @@ package com.syswarp.views.operaciones;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.syswarp.data.entity.Contenedores;
 import com.syswarp.data.entity.Medios;
@@ -9,6 +11,8 @@ import com.syswarp.data.entity.Multiplicaciones;
 import com.syswarp.data.entity.Operaciones;
 import com.syswarp.data.entity.Operarios;
 import com.syswarp.data.entity.Variedades;
+import com.syswarp.data.service.ContenedoresRepository;
+import com.syswarp.data.service.ContenedoresService;
 import com.syswarp.data.service.OperacionesService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
@@ -41,6 +45,9 @@ import com.vaadin.flow.component.textfield.TextField;
 @CssImport("./styles/views/operaciones/operaciones-view.css")
 public class OperacionesView extends Div {
 
+	 @Autowired
+	 ContenedoresRepository cr;
+	
     private Grid<Operaciones> grid = new Grid<>(Operaciones.class, false);
 
   //  private TextField idoperacion;
@@ -77,7 +84,7 @@ public class OperacionesView extends Div {
         grid.addColumn("fecha").setAutoWidth(true);
         
         
-        //grid.addColumn(this::FKContenedor).setAutoWidth(true);
+        grid.addColumn(this::FKContenedor).setAutoWidth(true);
         
         //grid.addColumn("idcontenedor").setAutoWidth(true);
         grid.addColumn("idvariedad").setAutoWidth(true);
@@ -201,7 +208,36 @@ public class OperacionesView extends Div {
 
     private void populateForm(Operaciones value) {
         this.operaciones = value;
+        // poblar combos
         
+        List<Contenedores> contenedoresList = cr.findAll();
+        System.out.println("Cantidad de Contenedores: "+cr.findAll().size());
+        contenedores.setItems(contenedoresList);
+        contenedores.setItemLabelGenerator(Contenedores::getContenedor);
+        //contenedores.setClearButtonVisible(true);
+        //contenedores.setReadOnly(true);
+        
+        
+       // Contenedores
+        // esto devuelve unicamente el que esta guardado.
+        /*
+        Contenedores c = new Contenedores();
+        Set<Contenedores> s = c.getContenedores();
+        List<Contenedores> cList = s.stream().collect(Collectors.toList()); 
+        //contenedores.setItems(cList);
+        //contenedores.setItemLabelGenerator(Contenedores::getContenedor);
+        */
+        //Contenedores c= value.getContenedores();
+        
+       
+        
+        
+        
+        
+       // List<Contenedores> contenedoresList = contenedores.  ;
+       // contenedores.setItemLabelGenerator(Contenedores::getContenedor);
+       // contenedores.setItems(contenedoresList);
+       // comboBox.setItems(departmentList); 
         binder.readBean(this.operaciones);
 
     }

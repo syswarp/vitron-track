@@ -1,6 +1,9 @@
 package com.syswarp.data.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.syswarp.data.AbstractEntity;
 import java.util.Date;
@@ -8,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Table(name = "multiplicaciones")
 public class Multiplicaciones extends AbstractEntity {
 
     //private Integer idmultiplicacion;
@@ -18,9 +22,12 @@ public class Multiplicaciones extends AbstractEntity {
     private String usuarioact;
     private Date fechaalt;
     private Date fechaact;
-
+    
+    @OneToMany(mappedBy = "multiplicaciones", cascade = CascadeType.ALL)
+    private Set<Multiplicaciones> multiplicaciones = new HashSet<>(); 
+    
   
-    public Integer getIdmultiplicacion_padre() {
+ 	public Integer getIdmultiplicacion_padre() {
         return idmultiplicacion_padre;
     }
     public void setIdmultiplicacion_padre(Integer idmultiplicacion_padre) {
@@ -51,5 +58,11 @@ public class Multiplicaciones extends AbstractEntity {
 		this.fechaact = fechaact;
 	}
 
-    
+	   public Set<Multiplicaciones> getMultiplicaciones() {
+			return multiplicaciones;
+		}
+		public void setMultiplicaciones(Set<Multiplicaciones> multiplicaciones) {
+			this.multiplicaciones = multiplicaciones;
+		}
+  
 }

@@ -1,6 +1,10 @@
 package com.syswarp.data.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,6 +13,8 @@ import java.util.Set;
 import com.syswarp.data.AbstractEntity;
 
 @Entity
+@Table(name = "medios")
+
 public class Medios extends AbstractEntity {
 
    // private Integer idmedio;
@@ -23,9 +29,11 @@ public class Medios extends AbstractEntity {
     //private Set produccioneses = new HashSet(0);
     
     
+    @OneToMany(mappedBy = "medios", cascade = CascadeType.ALL)
+    private Set<Medios> medios = new HashSet<>(); 
+ 
 
-
-    public String getMedio() {
+	public String getMedio() {
         return medio;
     }
     public void setMedio(String medio) {
@@ -57,6 +65,12 @@ public class Medios extends AbstractEntity {
 		this.fechaact = fechaact;
 	}
 
+    public Set<Medios> getMedios() {
+		return medios;
+	}
+	public void setMedios(Set<Medios> medios) {
+		this.medios = medios;
+	}
     
     
 }

@@ -38,13 +38,14 @@ public class Operaciones extends AbstractEntity {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     
     private Contenedores contenedores;
-    
+   
     
     
     
     
     public Contenedores getContenedores() {
 		return contenedores;
+	
 	}
 	public void setContenedores(Contenedores contenedores) {
 		this.contenedores = contenedores;

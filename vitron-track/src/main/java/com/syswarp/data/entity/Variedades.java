@@ -1,6 +1,9 @@
 package com.syswarp.data.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.syswarp.data.AbstractEntity;
 import java.util.Date;
@@ -8,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Table(name = "variedades")
 public class Variedades extends AbstractEntity {
 
     //private Integer idvariedad;
@@ -18,11 +22,13 @@ public class Variedades extends AbstractEntity {
     private String usuarioact;
     private Date fechaalt;
     private Date fechaact;
-//    private Set produccioneses = new HashSet(0);
+
+    @OneToMany(mappedBy = "variedades", cascade = CascadeType.ALL)
+    private Set<Variedades> variedades = new HashSet<>(); 
+    
 
     
-    
-    public String getVariedad() {
+	public String getVariedad() {
         return variedad;
     }
     public void setVariedad(String variedad) {
@@ -52,4 +58,14 @@ public class Variedades extends AbstractEntity {
 	public void setFechaact(Date fechaact) {
 		this.fechaact = fechaact;
 	}
+    
+    public Set<Variedades> getVariedades() {
+		return variedades;
+	}
+	public void setVariedades(Set<Variedades> variedades) {
+		this.variedades = variedades;
+	}
+
+
+
 }
