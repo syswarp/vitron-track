@@ -35,6 +35,7 @@ public class MultiplicacionesView extends Div {
     private Grid<Multiplicaciones> grid = new Grid<>(Multiplicaciones.class, false);
 
     private TextField idmultiplicacion_padre;
+    private TextField descripcion;
 
     private Button cancel = new Button("Cancelar");
     private Button save = new Button("Guardar");
@@ -58,6 +59,8 @@ public class MultiplicacionesView extends Div {
         grid.addColumn("id").setHeader("Codigo").setWidth("100px") ;  //.setAutoWidth(true);
 
         grid.addColumn("idmultiplicacion_padre").setAutoWidth(true).setHeader("Cod. Multiplicacion Padre");
+        grid.addColumn("descripcion").setAutoWidth(true).setHeader("Descripcion");
+
         grid.setDataProvider(new CrudServiceDataProvider<>(multiplicacionesService));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.setHeightFull();
@@ -121,7 +124,8 @@ public class MultiplicacionesView extends Div {
         FormLayout formLayout = new FormLayout();
  //       idmultiplicacion = new TextField("Idmultiplicacion");
         idmultiplicacion_padre = new TextField("Cod. Mult. (Padre)");
-        Component[] fields = new Component[]{idmultiplicacion_padre};
+        descripcion=new TextField("Descripcion");
+        Component[] fields = new Component[]{idmultiplicacion_padre, descripcion};
 
         for (Component field : fields) {
             ((HasStyle) field).addClassName("full-width");

@@ -10,9 +10,12 @@ import org.vaadin.artur.helpers.CrudService;
 public class MediosService extends CrudService<Medios, Integer> {
 
     private MediosRepository repository;
-
-    public MediosService(@Autowired MediosRepository repository) {
+    private OperacionesRepository  operacionesRepository;
+   
+    @Autowired
+    public MediosService( MediosRepository repository, OperacionesRepository  operacionesRepository) {
         this.repository = repository;
+        this.operacionesRepository = operacionesRepository;
     }
 
     @Override

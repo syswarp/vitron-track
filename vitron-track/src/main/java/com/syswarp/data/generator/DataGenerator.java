@@ -91,10 +91,10 @@ public class DataGenerator {
           //  operacionesRepositoryGenerator.setData(Operaciones::setIdoperacion, DataType.NUMBER_UP_TO_100);
             operacionesRepositoryGenerator.setData(Operaciones::setFecha, DataType.DATE_OF_BIRTH);
           //  operacionesRepositoryGenerator.setData(Operaciones::setIdcontenedor, DataType.NUMBER_UP_TO_100);
-            operacionesRepositoryGenerator.setData(Operaciones::setIdvariedad, DataType.NUMBER_UP_TO_100);
-            operacionesRepositoryGenerator.setData(Operaciones::setIdoperario, DataType.NUMBER_UP_TO_100);
-            operacionesRepositoryGenerator.setData(Operaciones::setIdmultiplicacion, DataType.NUMBER_UP_TO_100);
-            operacionesRepositoryGenerator.setData(Operaciones::setIdmedio, DataType.NUMBER_UP_TO_100);
+        //    operacionesRepositoryGenerator.setData(Operaciones::setIdvariedad, DataType.NUMBER_UP_TO_100);
+      //      operacionesRepositoryGenerator.setData(Operaciones::setIdoperario, DataType.NUMBER_UP_TO_100);
+   //         operacionesRepositoryGenerator.setData(Operaciones::setIdmultiplicacion, DataType.NUMBER_UP_TO_100);
+        //    operacionesRepositoryGenerator.setData(Operaciones::setIdmedio, DataType.NUMBER_UP_TO_100);
             operacionesRepositoryGenerator.setData(Operaciones::setObservaciones, DataType.WORD);
             operacionesRepository.saveAll(operacionesRepositoryGenerator.create(100, seed));
 

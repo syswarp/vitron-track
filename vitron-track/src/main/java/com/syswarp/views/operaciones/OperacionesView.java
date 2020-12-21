@@ -13,7 +13,11 @@ import com.syswarp.data.entity.Operarios;
 import com.syswarp.data.entity.Variedades;
 import com.syswarp.data.service.ContenedoresRepository;
 import com.syswarp.data.service.ContenedoresService;
+import com.syswarp.data.service.MediosRepository;
+import com.syswarp.data.service.MultiplicacionesRepository;
 import com.syswarp.data.service.OperacionesService;
+import com.syswarp.data.service.OperariosRepository;
+import com.syswarp.data.service.VariedadesRepository;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.button.Button;
@@ -31,13 +35,19 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-
+/*
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.themes.ValoTheme;
+*/
+//import ar.com.syswarp.MesaCoordinacion.samples.ResetButtonForTextField;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import com.syswarp.views.main.MainView;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 
 @Route(value = "operaciones", layout = MainView.class)
@@ -47,6 +57,22 @@ public class OperacionesView extends Div {
 
 	 @Autowired
 	 ContenedoresRepository cr;
+
+	 @Autowired
+	 MediosRepository mr;
+
+	 @Autowired
+	 OperariosRepository or;
+	 
+	 @Autowired
+	 VariedadesRepository vr;
+
+	 @Autowired
+	 MultiplicacionesRepository mulr;
+
+	 
+	 private TextField filtro;
+	 private Button nuevo;
 	
     private Grid<Operaciones> grid = new Grid<>(Operaciones.class, false);
 
@@ -55,11 +81,11 @@ public class OperacionesView extends Div {
    // private TextField idcontenedor;
     
     private ComboBox<Contenedores> contenedores;
-    private ComboBox<Variedades>  idvariedad;
-    private ComboBox<Operarios> idoperario;
-    private ComboBox<Multiplicaciones> idmultiplicacion;
-    private ComboBox<Medios> idmedio;
-    private TextField observaciones;
+    private ComboBox<Variedades>  variedades;
+    private ComboBox<Operarios> operarios;
+    private ComboBox<Multiplicaciones> multiplicaciones;
+    private ComboBox<Medios> medios;
+    private TextArea observaciones;
 
     private Button cancel = new Button("Cancelar");
     private Button save = new Button("Guardar");
@@ -84,14 +110,21 @@ public class OperacionesView extends Div {
         grid.addColumn("fecha").setAutoWidth(true);
         
         
-        grid.addColumn(this::FKContenedor).setAutoWidth(true);
+        grid.addColumn(this::FKContenedor).setHeader("Contenedor").setAutoWidth(true);
+        grid.addColumn(this::FKMedio).setHeader("Medio").setAutoWidth(true);
+        grid.addColumn(this::FKOperario).setHeader("Operario").setAutoWidth(true);
+        grid.addColumn(this::FKVariedad).setHeader("Variedad").setAutoWidth(true);
+        grid.addColumn(this::FKMultiplicacion).setHeader("Multiplicacion").setAutoWidth(true);
         
         //grid.addColumn("idcontenedor").setAutoWidth(true);
-        grid.addColumn("idvariedad").setAutoWidth(true);
-        grid.addColumn("idoperario").setAutoWidth(true);
-        grid.addColumn("idmultiplicacion").setAutoWidth(true);
-        grid.addColumn("idmedio").setAutoWidth(true);
+        //grid.addColumn("idvariedad").setAutoWidth(true);
+        //grid.addColumn("idoperario").setAutoWidth(true);
+        
+        
+        //grid.addColumn("idmultiplicacion").setAutoWidth(true);
+      //  grid.addColumn("idmedio").setAutoWidth(true);
         grid.addColumn("observaciones").setAutoWidth(true);
+        
         grid.setDataProvider(new CrudServiceDataProvider<>(operacionesService));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.setHeightFull();
@@ -116,10 +149,10 @@ public class OperacionesView extends Div {
 
         // Bind fields. This where you'd define e.g. validation rules
         //binder.forField(idcontenedor).bind("idcontenedor");
-        binder.forField(idvariedad).bind("idvariedad");
-        binder.forField(idoperario).bind("idoperario");
-        binder.forField(idmultiplicacion).bind("idmultiplicacion");
-        binder.forField(idmedio).bind("idmedio");
+        //binder.forField(idvariedad).bind("idvariedad");
+        //binder.forField(idoperario).bind("idoperario");
+        //binder.forField(idmultiplicacion).bind("idmultiplicacion");
+        //binder.forField(idmedio).bind("idmedio");
         
         
 
@@ -140,9 +173,9 @@ public class OperacionesView extends Div {
                 operacionesService.update(this.operaciones);
                 clearForm();
                 refreshGrid();
-                Notification.show("Operaciones details stored.");
+                Notification.show("Operacion actualizada correctamente");
             } catch (ValidationException validationException) {
-                Notification.show("An exception happened while trying to store the operaciones details.");
+                Notification.show("Ocurrio un problema mientras se intentaba actualizar la operacion");
             }
         });
 
@@ -160,13 +193,17 @@ public class OperacionesView extends Div {
 //        idoperacion = new TextField("Idoperacion");
         fecha = new DatePicker("Fecha");
         contenedores = new ComboBox("Contenedor");
-        idvariedad = new ComboBox("Variedad");
-        idoperario = new ComboBox("Operario");
-        idmultiplicacion = new ComboBox("Multiplicacion");
-        idmedio = new ComboBox("Medio");
-        observaciones = new TextField("Observaciones");
-        Component[] fields = new Component[]{ fecha, contenedores, idvariedad, idoperario, idmultiplicacion,
-                idmedio, observaciones};
+        medios = new ComboBox("Medio");
+        variedades = new ComboBox("Variedad");
+        operarios = new ComboBox("Operario");
+        multiplicaciones = new ComboBox("Multiplicacion");
+        observaciones = new TextArea("Observaciones");
+        
+        observaciones.getStyle().set("maxHeight", "150px");
+        //observaciones.setHeightFull();
+       
+        Component[] fields = new Component[]{ fecha, contenedores, medios, variedades, operarios, multiplicaciones,
+                 observaciones};
 
         for (Component field : fields) {
             ((HasStyle) field).addClassName("full-width");
@@ -210,12 +247,32 @@ public class OperacionesView extends Div {
         this.operaciones = value;
         // poblar combos
         
+        //contenedores
         List<Contenedores> contenedoresList = cr.findAll();
-        System.out.println("Cantidad de Contenedores: "+cr.findAll().size());
         contenedores.setItems(contenedoresList);
         contenedores.setItemLabelGenerator(Contenedores::getContenedor);
         //contenedores.setClearButtonVisible(true);
         //contenedores.setReadOnly(true);
+
+        //medios
+        List<Medios> mediosList = mr.findAll();
+        medios.setItems(mediosList);
+        medios.setItemLabelGenerator(Medios::getMedio);
+        
+        //operarios
+        List<Operarios> operariosList = or.findAll();
+        operarios.setItems(operariosList);
+        operarios.setItemLabelGenerator(Operarios::getOperario);
+        
+        //variedades
+        List<Variedades> variedadesList = vr.findAll();
+        variedades.setItems(variedadesList);
+        variedades.setItemLabelGenerator(Variedades::getVariedad);
+        
+        //Multiplicaciones
+        List<Multiplicaciones> multiplicacionesList = mulr.findAll();
+        multiplicaciones.setItems(multiplicacionesList);
+        multiplicaciones.setItemLabelGenerator(Multiplicaciones::getDescripcion);
         
         
        // Contenedores
@@ -245,5 +302,50 @@ public class OperacionesView extends Div {
     private String FKContenedor(Operaciones op) {
         return op.getContenedores().getContenedor();
      }
- 
+
+    private String FKMedio(Operaciones op) {
+        return op.getMedios().getMedio();
+     }
+
+    private String FKOperario(Operaciones op) {
+        return op.getOperarios().getOperario();
+     }
+
+    private String FKVariedad(Operaciones op) {
+        return op.getVariedades().getVariedad();
+     }
+
+    private String FKMultiplicacion(Operaciones op) {
+        return op.getMultiplicaciones().getDescripcion();
+     }
+    
+    
+    public HorizontalLayout createTopBar() {
+        filtro = new TextField();
+        //filtro.setStyleName("filter-textfield");
+        filtro.setPlaceholder("Ocurrencia..");
+        
+        //ResetButtonForTextField.extend(filtro);
+        
+        
+        // Apply the filter to grid's data provider. TextField value is never null
+       // filtro.addValueChangeListener(event -> dataProvider.setFilter(event.getValue()));
+
+        nuevo = new Button("Nueva Agencia");
+        //nuevo.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        //nuevo.setIcon(VaadinIcons.PLUS_CIRCLE);
+        //nuevo.addClickListener(click -> viewLogic.nuevo());
+
+        HorizontalLayout topLayout = new HorizontalLayout();
+        topLayout.setWidth("100%");
+      //  topLayout.addComponent(filtro);
+      //  topLayout.addComponent(nuevo);
+       // topLayout.setComponentAlignment(filter, Alignment.MIDDLE_LEFT);
+      //  topLayout.setExpandRatio(filter, 1);
+       // topLayout.setStyleName("top-bar");
+        return topLayout;
+    }
+
+    
+    
 }

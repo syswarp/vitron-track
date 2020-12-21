@@ -20,7 +20,8 @@ public class Multiplicaciones extends AbstractEntity {
     private Integer idmultiplicacion_padre;
 	private String usuarioalt;
     private String usuarioact;
-    private Date fechaalt;
+    private String descripcion;
+	private Date fechaalt;
     private Date fechaact;
     
     @OneToMany(mappedBy = "multiplicaciones", cascade = CascadeType.ALL)
@@ -64,5 +65,11 @@ public class Multiplicaciones extends AbstractEntity {
 		public void setMultiplicaciones(Set<Multiplicaciones> multiplicaciones) {
 			this.multiplicaciones = multiplicaciones;
 		}
-  
+	    public String getDescripcion() {
+			return descripcion;
+		}
+		public void setDescripcion(String descripcion) {
+			this.descripcion = descripcion;
+		}
+
 }

@@ -22,10 +22,10 @@ public class Operaciones extends AbstractEntity {
    // private Integer idoperacion;
     private LocalDate fecha;
    // private Integer idcontenedor;
-    private Integer idvariedad;
-    private Integer idoperario;
-    private Integer idmultiplicacion;
-    private Integer idmedio;
+   // private Integer idvariedad;
+    //private Integer idoperario;
+    //private Integer idmultiplicacion;
+//    private Integer idmedio;
     private String observaciones;
 // todo aca no van aparentemente metodos de constraint    
     private String usuarioalt;
@@ -33,61 +33,47 @@ public class Operaciones extends AbstractEntity {
     private Date fechaalt;
     private Date fechaact;
  
+    
+    // contenedores
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idcontenedor")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    
     private Contenedores contenedores;
    
+    // medios
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idmedio")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Medios medios;
     
     
+    // Operarios
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idoperario")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Operarios operarios;
+    
+    // Variedades
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idvariedad")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Variedades variedades;
+
+    // Multiplicaciones
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idmultiplicacion")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Multiplicaciones multiplicaciones;
+
     
     
-    public Contenedores getContenedores() {
-		return contenedores;
-	
-	}
-	public void setContenedores(Contenedores contenedores) {
-		this.contenedores = contenedores;
-	}
 	public LocalDate getFecha() {
         return fecha;
     }
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
-    /*
-    public Integer getIdcontenedor() {
-        return idcontenedor;
-    }
-    public void setIdcontenedor(Integer idcontenedor) {
-        this.idcontenedor = idcontenedor;
-    }
-    */
-    public Integer getIdvariedad() {
-        return idvariedad;
-    }
-    public void setIdvariedad(Integer idvariedad) {
-        this.idvariedad = idvariedad;
-    }
-    public Integer getIdoperario() {
-        return idoperario;
-    }
-    public void setIdoperario(Integer idoperario) {
-        this.idoperario = idoperario;
-    }
-    public Integer getIdmultiplicacion() {
-        return idmultiplicacion;
-    }
-    public void setIdmultiplicacion(Integer idmultiplicacion) {
-        this.idmultiplicacion = idmultiplicacion;
-    }
-    public Integer getIdmedio() {
-        return idmedio;
-    }
-    public void setIdmedio(Integer idmedio) {
-        this.idmedio = idmedio;
-    }
+
     public String getObservaciones() {
         return observaciones;
     }
@@ -120,5 +106,37 @@ public class Operaciones extends AbstractEntity {
 		this.fechaact = fechaact;
 	}
 
+    public Operarios getOperarios() {
+		return operarios;
+	}
+	public void setOperarios(Operarios operarios) {
+		this.operarios = operarios;
+	}
+	public Medios getMedios() {
+		return medios;
+	}
+	public void setMedios(Medios medios) {
+		this.medios = medios;
+	}
+	public Contenedores getContenedores() {
+		return contenedores;
+	
+	}
+	public void setContenedores(Contenedores contenedores) {
+		this.contenedores = contenedores;
+	}
+	public Variedades getVariedades() {
+		return variedades;
+	}
+	public void setVariedades(Variedades variedades) {
+		this.variedades = variedades;
+	}
+	public Multiplicaciones getMultiplicaciones() {
+		return multiplicaciones;
+	}
+	public void setMultiplicaciones(Multiplicaciones multiplicaciones) {
+		this.multiplicaciones = multiplicaciones;
+	}
 
+	
 }

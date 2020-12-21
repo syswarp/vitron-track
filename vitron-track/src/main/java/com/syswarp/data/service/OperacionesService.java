@@ -12,10 +12,12 @@ public class OperacionesService extends CrudService<Operaciones, Integer> {
 
     private OperacionesRepository repository;
     private ContenedoresRepository contenedoresRepository;
+    private MediosRepository mediosRepository;
     @Autowired 
-    public OperacionesService(OperacionesRepository repository,ContenedoresRepository contenedoresRepository ) {
+    public OperacionesService(OperacionesRepository repository,ContenedoresRepository contenedoresRepository, MediosRepository  mediosRepository) {
         this.repository = repository;
         this.contenedoresRepository = contenedoresRepository;
+        this.mediosRepository = mediosRepository;
     }
 
     @Override
