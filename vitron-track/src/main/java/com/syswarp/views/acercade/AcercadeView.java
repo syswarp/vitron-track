@@ -15,6 +15,8 @@ import com.vaadin.flow.server.Version;
 @Route(value = "about", layout = MainView.class)
 @PageTitle("Acerca de:")
 @RouteAlias(value = "", layout = MainView.class)
+
+
 public class AcercadeView extends Div {
 
     public AcercadeView() {

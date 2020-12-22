@@ -23,6 +23,7 @@ import com.vaadin.flow.theme.Theme;
 import com.syswarp.views.main.MainView;
 import com.syswarp.views.acercade.AcercadeView;
 import com.syswarp.views.contenedores.ContenedoresView;
+import com.syswarp.views.login.LoginView;
 import com.syswarp.views.medios.MediosView;
 import com.syswarp.views.multiplicaciones.MultiplicacionesView;
 import com.syswarp.views.operarios.OperariosView;
@@ -89,6 +90,7 @@ public class MainView extends AppLayout {
     private Component[] createMenuItems() {
         return new Tab[]
         		{        	    
+        	    createTab("Login", LoginView.class),		
         	    createTab("Contenedores", ContenedoresView.class),
 
         	    createTab("Medios", MediosView.class), 

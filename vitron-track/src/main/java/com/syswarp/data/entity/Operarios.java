@@ -1,6 +1,7 @@
 package com.syswarp.data.entity;
 
 import javax.persistence.CascadeType;
+import org.apache.commons.codec.digest.*;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -22,6 +23,9 @@ public class Operarios extends AbstractEntity {
     private String usuarioact;
     private Date fechaalt;
     private Date fechaact;
+    
+    // validacion de usuarios
+    
     
     @OneToMany(mappedBy = "operarios", cascade = CascadeType.ALL)
     private Set<Operarios> operarios = new HashSet<>(); 
@@ -83,6 +87,14 @@ public class Operarios extends AbstractEntity {
 		this.operarios = operarios;
 	}
 
-
-    
+    // validacion de usuarios
+	
+	/*
+    public String validarUsuario(String usuario, String clave) {
+    	String salida = "NOOK";
+    	DigestUtils.sha1Hex(clave);
+    	
+    	return salida;
+    }
+    */
 }
