@@ -1,18 +1,26 @@
 package com.syswarp.views.medios;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import com.syswarp.data.entity.Medios;
 import com.syswarp.data.service.MediosService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog.ConfirmEvent;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -20,11 +28,15 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+//import com.vaadin.icons.VaadinIcons;
+//import com.vaadin.ui.themes.ValoTheme;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import com.syswarp.views.main.MainView;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.component.textfield.TextField;
 
 @Route(value = "medios", layout = MainView.class)
@@ -32,135 +44,220 @@ import com.vaadin.flow.component.textfield.TextField;
 @CssImport("./styles/views/medios/medios-view.css")
 public class MediosView extends Div {
 
-    private Grid<Medios> grid = new Grid<>(Medios.class, false);
+	private Grid<Medios> grid = new Grid<>(Medios.class, false);
 
-   // private TextField idmedio;
-    private TextField medio;
+	// private TextField idmedio;
+	private TextField medio;
 
-    private Button cancel = new Button("Cancelar");
-    private Button save = new Button("Guardar");
+	private Button cancel = new Button("Cancelar");
+	private Button save = new Button("Guardar");
+	private Button filtrar = new Button("Filtrar");
+	private Button alta = new Button("Nuevo Medio");
+	private Button baja = new Button("Eliminar");
 
-    private BeanValidationBinder<Medios> binder;
+	private BeanValidationBinder<Medios> binder;
 
-    private Medios medios;
+	private Medios medios;
 
-    public MediosView(@Autowired MediosService mediosService) {
-        setId("medios-view");
-        // Create UI
-        SplitLayout splitLayout = new SplitLayout();
-        splitLayout.setSizeFull();
+	private TextField filtro;
 
-        createGridLayout(splitLayout);
-        createEditorLayout(splitLayout);
+	public MediosView(@Autowired MediosService mediosService) {
+		setId("medios-view");
+		// Create UI
+		SplitLayout splitLayout = new SplitLayout();
+		splitLayout.setSizeFull();
 
-        add(splitLayout);
+		createGridLayout(splitLayout);
 
-        // Configure Grid
-       // grid.addColumn("idmedio").setAutoWidth(true);
-        grid.addColumn("id").setHeader("Codigo").setWidth("100px") ;  //.setAutoWidth(true);
-        grid.addColumn("medio").setAutoWidth(true);
-        grid.setDataProvider(new CrudServiceDataProvider<>(mediosService));
-        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
-        grid.setHeightFull();
+		createEditorLayout(splitLayout);
 
-        // when a row is selected or deselected, populate form
-        grid.asSingleSelect().addValueChangeListener(event -> {
-            if (event.getValue() != null) {
-                Optional<Medios> mediosFromBackend = mediosService.get(event.getValue().getId());
-                // when a row is selected but the data is no longer available, refresh grid
-                if (mediosFromBackend.isPresent()) {
-                    populateForm(mediosFromBackend.get());
-                } else {
-                    refreshGrid();
-                }
-            } else {
-                clearForm();
-            }
-        });
+		add(splitLayout);
 
-        // Configure Form
-        binder = new BeanValidationBinder<>(Medios.class);
+		// Configure Grid
+		// grid.addColumn("idmedio").setAutoWidth(true);
+		grid.addColumn("id").setHeader("Codigo").setWidth("100px"); // .setAutoWidth(true);
+		grid.addColumn("medio").setAutoWidth(true);
+		grid.setDataProvider(new CrudServiceDataProvider<>(mediosService));
+		grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+		grid.setHeightFull();
 
-        // Bind fields. This where you'd define e.g. validation rules
- 
-        binder.bindInstanceFields(this);
+		// when a row is selected or deselected, populate form
+		grid.asSingleSelect().addValueChangeListener(event -> {
+			if (event.getValue() != null) {
+				Optional<Medios> mediosFromBackend = mediosService.get(event.getValue().getId());
+				// when a row is selected but the data is no longer available, refresh grid
+				if (mediosFromBackend.isPresent()) {
+					populateForm(mediosFromBackend.get());
+				} else {
+					refreshGrid();
+				}
+			} else {
+				clearForm();
+			}
+		});
 
-        cancel.addClickListener(e -> {
-            clearForm();
-            refreshGrid();
-        });
+		// Configure Form
+		binder = new BeanValidationBinder<>(Medios.class);
 
-        save.addClickListener(e -> {
-            try {
-                if (this.medios == null) {
-                    this.medios = new Medios();
-                }
-                binder.writeBean(this.medios);
+		// Bind fields. This where you'd define e.g. validation rules
 
-                mediosService.update(this.medios);
-                clearForm();
-                refreshGrid();
-                Notification.show("Medios actualizado correctamente.");
-            } catch (ValidationException validationException) {
-                Notification.show("Ocurrio un error mientras se intentaba actualizar Medios.");
-            }
-        });
+		binder.bindInstanceFields(this);
 
-    }
+		cancel.addClickListener(e -> {
+			clearForm();
+			refreshGrid();
+		});
 
-    private void createEditorLayout(SplitLayout splitLayout) {
-        Div editorLayoutDiv = new Div();
-        editorLayoutDiv.setId("editor-layout");
+		save.addClickListener(e -> {
+			try {
+				if (this.medios == null) {
+					this.medios = new Medios();
+				}
+				binder.writeBean(this.medios);
+				mediosService.update(this.medios);
+				clearForm();
+				refreshGrid();
+				Notification.show("Medios actualizado correctamente.");
+			} catch (ValidationException validationException) {
+				Notification.show("Ocurrio un error mientras se intentaba actualizar Medios.");
+			}
+		});
 
-        Div editorDiv = new Div();
-        editorDiv.setId("editor");
-        editorLayoutDiv.add(editorDiv);
+		// listerner para escuchar el boton de altas
+		alta.addClickListener(e -> {
+			clearForm();
+			refreshGrid();
+			Notification.show("Alta de Medio");
+		});
 
-        FormLayout formLayout = new FormLayout();
-        medio = new TextField("Medio");
-        Component[] fields = new Component[]{ medio};
+		// listerner para escuchar el filtro
+		filtrar.addClickListener(e -> {
+			if (filtro.getValue().equalsIgnoreCase("")) {
+				Notification.show("Eliminacion de Filtro");
+				grid.setItems(mediosService.findAll(filtro.getValue()));
+			} else {
+				grid.setItems(mediosService.findAll(filtro.getValue()));
+				refreshGrid();
+				Notification.show("Filtro aplicado");
+			}
+		});
 
-        for (Component field : fields) {
-            ((HasStyle) field).addClassName("full-width");
-        }
-        formLayout.add(fields);
-        editorDiv.add(formLayout);
-        createButtonLayout(editorLayoutDiv);
+		// listener para escuchar el boton de bajas
+		baja.addClickListener(e -> {
 
-        splitLayout.addToSecondary(editorLayoutDiv);
-    }
+			ConfirmDialog dialog = new ConfirmDialog("Confirma eliminacion de registro",
+					"Esta seguro que quiere eliminar el item seleccionado?", "Borrar", null, "Cancelar", null);
+			dialog.setConfirmButtonTheme("error primary");
+			dialog.open();
+			// TODO: Falta que la confirmacion sea efectiva!!
+			mediosService.delete(this.medios.getId());
+           System.out.println("Codigo de Medio: " + this.medios.getId() );
+			refreshGrid();
 
-    private void createButtonLayout(Div editorLayoutDiv) {
-        HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.setId("button-layout");
-        buttonLayout.setWidthFull();
-        buttonLayout.setSpacing(true);
-        cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(save, cancel);
-        editorLayoutDiv.add(buttonLayout);
-    }
+			// Notification.show("Baja de Medio");
+		});
 
-    private void createGridLayout(SplitLayout splitLayout) {
-        Div wrapper = new Div();
-        wrapper.setId("grid-wrapper");
-        wrapper.setWidthFull();
-        splitLayout.addToPrimary(wrapper);
-        wrapper.add(grid);
-    }
+	}
 
-    private void refreshGrid() {
-        grid.select(null);
-        grid.getDataProvider().refreshAll();
-    }
+	public void onCancel(ConfirmEvent l) {
 
-    private void clearForm() {
-        populateForm(null);
-    }
+	}
 
-    private void populateForm(Medios value) {
-        this.medios = value;
-        binder.readBean(this.medios);
+	public void onPublish(ConfirmEvent l) {
 
-    }
+	}
+
+	private void createEditorLayout(SplitLayout splitLayout) {
+		Div editorLayoutDiv = new Div();
+		editorLayoutDiv.setId("editor-layout");
+
+		Div editorDiv = new Div();
+		editorDiv.setId("editor");
+		editorLayoutDiv.add(editorDiv);
+
+		FormLayout formLayout = new FormLayout();
+
+		medio = new TextField("Medio");
+		Component[] fields = new Component[] { medio };
+
+		for (Component field : fields) {
+			((HasStyle) field).addClassName("full-width");
+		}
+		formLayout.add(fields);
+		editorDiv.add(formLayout);
+		createButtonLayout(editorLayoutDiv);
+
+		splitLayout.addToSecondary(editorLayoutDiv);
+	}
+
+	private void createButtonLayout(Div buttonLayoutDiv) {
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.setId("button-layout");
+		buttonLayout.setWidthFull();
+		buttonLayout.setSpacing(true);
+		cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+		save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		baja.addThemeVariants(ButtonVariant.LUMO_ERROR);
+		buttonLayout.add(save, cancel, baja);
+		buttonLayoutDiv.add(buttonLayout);
+	}
+
+	private void createGridLayout(SplitLayout splitLayout) {
+		Div wrapper = new Div();
+		wrapper.setId("grid-wrapper");
+		wrapper.setWidthFull();
+		splitLayout.addToPrimary(wrapper);
+
+		createFiltroLayout(wrapper);
+
+		wrapper.add(grid);
+
+	}
+
+	private void createFiltroLayout(Div editorLayoutDiv) {
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		filtro = new TextField();
+		filtro.setPlaceholder("Indique ocurrencia");
+
+		Icon icon = new Icon(VaadinIcon.EDIT);
+		alta.getElement().appendChild(icon.getElement());
+
+		alta.getElement().getStyle().set("margin-left", "auto");
+		alta.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+		buttonLayout.setId("button-layout");
+		buttonLayout.setWidthFull();
+		buttonLayout.setSpacing(true);
+
+		filtrar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		Icon iconFilter = new Icon(VaadinIcon.FILTER);
+		filtrar.getElement().appendChild(iconFilter.getElement());
+
+		
+		buttonLayout.add(filtro, filtrar, alta);
+		editorLayoutDiv.add(buttonLayout);
+	}
+
+	private void refreshGrid() {
+		grid.select(null);
+		grid.getDataProvider().refreshAll();
+	}
+
+	private void clearForm() {
+		populateForm(null);
+	}
+
+	private void populateForm(Medios value) {
+		this.medios = value;
+		binder.readBean(this.medios);
+
+	}
+    
+/*	
+	private void applyFilter(ListDataProvider<Medios> dataProvider) {
+	dataProvider.clearFilters();
+		dataProvider.addFilter(medio -> Objects.equals(filtro.getValue(), medio.getMedio()));
+
+	}
+*/	
 }

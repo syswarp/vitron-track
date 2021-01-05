@@ -1,9 +1,11 @@
 package com.syswarp.views.login;
 
 import com.vaadin.flow.component.Text;
+
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Span;
@@ -21,7 +23,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.syswarp.views.main.MainView;
 import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.Version;
+
+
+
 import com.syswarp.data.entity.Operarios;
 //import com.syswarp.data.service.AuthService;
 //import com.syswarp.data.service.AuthService.AuthException;
@@ -32,18 +38,23 @@ import com.syswarp.data.entity.Operarios;
 @CssImport("./styles/views/login/login-view.css")
 //@RouteAlias(value="")
 public class LoginView extends Div {
+	private final VerticalLayout layout = new VerticalLayout();
+	
+	
 	public LoginView() {
     	//setId("login-view");
     	
-    	//VerticalLayout layout = new VerticalLayout();
-
-		
-	
     	LoginForm component = new LoginForm();
+    	
+    	
     	component.setI18n(SetEspanol());
+    	
     	component.addLoginListener(e -> {
     	    boolean isAuthenticated = Autenticar(e);
     	    if (isAuthenticated) {
+    	    	// set el usuario 
+    	    	//VaadinSession.getCurrent().setAttribute(usuario, value);
+    	    	
     	    	 navigateToMainPage();
     	    	
     	    } else {
@@ -54,6 +65,7 @@ public class LoginView extends Div {
     	});
     	
     	add(component);
+    	
     	
     	
     	/*
