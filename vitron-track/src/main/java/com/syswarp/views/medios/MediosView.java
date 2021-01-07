@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.syswarp.data.entity.Medios;
+import com.syswarp.data.service.MediosRepository;
 import com.syswarp.data.service.MediosService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
@@ -33,6 +34,8 @@ import com.vaadin.flow.router.Route;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
+import org.vaadin.reports.PrintPreviewReport;
+
 import com.syswarp.views.main.MainView;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.provider.DataProvider;
@@ -63,6 +66,9 @@ public class MediosView extends Div {
 
 	public MediosView(@Autowired MediosService mediosService) {
 		setId("medios-view");
+		baja.setEnabled(false);
+
+		
 		// Create UI
 		SplitLayout splitLayout = new SplitLayout();
 		splitLayout.setSizeFull();
@@ -87,11 +93,15 @@ public class MediosView extends Div {
 				Optional<Medios> mediosFromBackend = mediosService.get(event.getValue().getId());
 				// when a row is selected but the data is no longer available, refresh grid
 				if (mediosFromBackend.isPresent()) {
+					baja.setEnabled(true);
 					populateForm(mediosFromBackend.get());
 				} else {
+					baja.setEnabled(false);
+					
 					refreshGrid();
 				}
 			} else {
+				baja.setEnabled(false);
 				clearForm();
 			}
 		});
@@ -114,10 +124,12 @@ public class MediosView extends Div {
 					this.medios = new Medios();
 				}
 				binder.writeBean(this.medios);
-				mediosService.update(this.medios);
-				clearForm();
-				refreshGrid();
-				Notification.show("Medios actualizado correctamente.");
+				if (validarCampos()) {
+					mediosService.update(this.medios);
+					Notification.show("Medios actualizado correctamente.");
+					clearForm();
+					refreshGrid();
+				}
 			} catch (ValidationException validationException) {
 				Notification.show("Ocurrio un error mientras se intentaba actualizar Medios.");
 			}
@@ -127,7 +139,7 @@ public class MediosView extends Div {
 		alta.addClickListener(e -> {
 			clearForm();
 			refreshGrid();
-			Notification.show("Alta de Medio");
+			//Notification.show("Alta de Medio");
 		});
 
 		// listerner para escuchar el filtro
@@ -146,24 +158,22 @@ public class MediosView extends Div {
 		baja.addClickListener(e -> {
 
 			ConfirmDialog dialog = new ConfirmDialog("Confirma eliminacion de registro",
-					"Esta seguro que quiere eliminar el item seleccionado?", "Borrar", null, "Cancelar", null);
+					"Esta seguro que quiere eliminar el item seleccionado?", "Cancelar",this::onCancelar, "Borrar", null);
 			dialog.setConfirmButtonTheme("error primary");
 			dialog.open();
-			// TODO: Falta que la confirmacion sea efectiva!!
+		    
 			mediosService.delete(this.medios.getId());
-           System.out.println("Codigo de Medio: " + this.medios.getId() );
-			refreshGrid();
-
-			// Notification.show("Baja de Medio");
+			Notification.show("Se elimino el Item");
+	     	refreshGrid();
+				
 		});
 
 	}
 
-	public void onCancel(ConfirmEvent l) {
 
-	}
-
-	public void onPublish(ConfirmEvent l) {
+	public void onCancelar(ConfirmEvent l) {
+	   Notification.show("Cancelado"); 
+		//
 
 	}
 
@@ -253,11 +263,22 @@ public class MediosView extends Div {
 
 	}
     
-/*	
-	private void applyFilter(ListDataProvider<Medios> dataProvider) {
-	dataProvider.clearFilters();
-		dataProvider.addFilter(medio -> Objects.equals(filtro.getValue(), medio.getMedio()));
+	
+	private  void reporte(ListDataProvider<Medios> dataProvider, @Autowired MediosService mediosService) {
 
+		PrintPreviewReport<Medios> report = new PrintPreviewReport<>(Medios.class);
+		report.setItems(mediosService.findAll());
+		//addComponent(report);
+		
 	}
-*/	
+	
+	private boolean validarCampos() {
+		boolean salida = true;
+		if(medio.getValue()==null || medio.getValue().trim().equals("")) {
+			Notification.show("El campo medio no puede quedar vacio");
+			salida = false;
+		}
+		return salida;
+	}
+	
 }
