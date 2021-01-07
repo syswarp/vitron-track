@@ -2,10 +2,12 @@ package com.syswarp.data.service;
 
 import com.syswarp.data.entity.Contenedores;
 
-import java.util.Collection;
+
+
+import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
+
 
 
 //import org.hibernate.mapping.Collection;
@@ -30,6 +32,19 @@ public class ContenedoresService extends CrudService<Contenedores, Integer> {
         return repository;
     }
     
+    
+	public List<Contenedores> findAll() {
+		return getRepository().findAll();
+	}
+
+	public List<Contenedores> findAll(String stringFilter) {
+		if (stringFilter == null || stringFilter.isEmpty()) {
+			return getRepository().findAll();
+		} else {
+			return getRepository().search(stringFilter) ;
+		}
+	}
+
    
    
 

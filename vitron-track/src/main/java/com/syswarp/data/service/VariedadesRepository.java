@@ -12,10 +12,5 @@ public interface VariedadesRepository extends JpaRepository<Variedades, Integer>
 
 	@Query("select c from Variedades c " +
 		      "where lower(c.variedad) like lower(concat('%', :searchTerm, '%') )  or cast( c.id as string ) = :searchTerm    ") // 
-
-
 		    List<Variedades> search(@Param("searchTerm") String searchTerm); // 
-
-
-	
 }
