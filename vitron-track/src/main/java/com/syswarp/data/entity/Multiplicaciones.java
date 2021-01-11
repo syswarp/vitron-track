@@ -2,6 +2,8 @@ package com.syswarp.data.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -17,23 +19,38 @@ public class Multiplicaciones extends AbstractEntity {
     //private Integer idmultiplicacion;
 	// TODO: Ver somo se hace la constraint para llamarse a si misma
 	
-    private Integer idmultiplicacion_padre;
+    //private Integer idmultiplicacion_padre;
 	private String usuarioalt;
     private String usuarioact;
     private String descripcion;
 	private Date fechaalt;
     private Date fechaact;
     
-    @OneToMany(mappedBy = "multiplicaciones", cascade = CascadeType.ALL)
+    
+    
+    @ManyToOne(cascade={CascadeType.ALL})
+	@JoinColumn(name="idmultiplicacion_padre")
+	private Multiplicaciones padre;
+    
+    public Multiplicaciones getPadre() {
+		return padre;
+	}
+	public void setPadre(Multiplicaciones padre) {
+		this.padre = padre;
+	}
+	
+	
+	@OneToMany(mappedBy = "multiplicaciones", cascade = CascadeType.ALL)
     private Set<Multiplicaciones> multiplicaciones = new HashSet<>(); 
     
-  
+  /*
  	public Integer getIdmultiplicacion_padre() {
         return idmultiplicacion_padre;
     }
     public void setIdmultiplicacion_padre(Integer idmultiplicacion_padre) {
         this.idmultiplicacion_padre = idmultiplicacion_padre;
     }
+    */
     public String getUsuarioalt() {
 		return usuarioalt;
 	}

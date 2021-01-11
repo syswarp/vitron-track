@@ -63,8 +63,8 @@ public class DataGenerator {
             multiplicacionesRepositoryGenerator.setData(Multiplicaciones::setId, DataType.ID);
            // multiplicacionesRepositoryGenerator.setData(Multiplicaciones::setIdmultiplicacion,
              //       DataType.NUMBER_UP_TO_100);
-            multiplicacionesRepositoryGenerator.setData(Multiplicaciones::setIdmultiplicacion_padre,
-                    DataType.NUMBER_UP_TO_100);
+      //      multiplicacionesRepositoryGenerator.setData(Multiplicaciones::setIdmultiplicacion_padre,
+      //              DataType.NUMBER_UP_TO_100);
             multiplicacionesRepository.saveAll(multiplicacionesRepositoryGenerator.create(100, seed));
 
             logger.info("... generating 100 Operarios entities...");

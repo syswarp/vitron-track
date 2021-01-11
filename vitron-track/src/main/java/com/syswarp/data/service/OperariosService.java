@@ -1,6 +1,9 @@
 package com.syswarp.data.service;
 
+import com.syswarp.data.entity.Medios;
 import com.syswarp.data.entity.Operarios;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,5 +22,19 @@ public class OperariosService extends CrudService<Operarios, Integer> {
     protected OperariosRepository getRepository() {
         return repository;
     }
+    
+    
+	public List<Operarios> findAll() {
+		return getRepository().findAll();
+	}
+
+	public List<Operarios> findAll(String stringFilter) {
+		if (stringFilter == null || stringFilter.isEmpty()) {
+			return getRepository().findAll();
+		} else {
+			return getRepository().search(stringFilter) ;
+		}
+	}
+
 
 }
