@@ -1,6 +1,7 @@
 package com.syswarp.views.medios;
 
 import java.util.Objects;
+import com.syswarp.Utiles;
 import java.util.Optional;
 
 import com.syswarp.data.entity.Medios;
@@ -83,6 +84,13 @@ public class MediosView extends Div {
 		// grid.addColumn("idmedio").setAutoWidth(true);
 		grid.addColumn("id").setHeader("Codigo").setWidth("100px"); // .setAutoWidth(true);
 		grid.addColumn("medio").setAutoWidth(true);
+	
+		/* por si quiero agregar un icono o imagen
+		grid.addComponentColumn( item-> { Icon icon = VaadinIcon.CHECK_CIRCLE.create(); 
+		  return icon;
+		   } );
+		*/
+		
 		grid.setDataProvider(new CrudServiceDataProvider<>(mediosService));
 		grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 		grid.setHeightFull();
@@ -106,6 +114,8 @@ public class MediosView extends Div {
 			}
 		});
 
+		
+		
 		// Configure Form
 		binder = new BeanValidationBinder<>(Medios.class);
 
@@ -120,11 +130,18 @@ public class MediosView extends Div {
 
 		save.addClickListener(e -> {
 			try {
+				java.util.Date hoy = new java.util.Date();
+				Utiles u = new Utiles();
 				if (this.medios == null) {
 					this.medios = new Medios();
+					this.medios.setFechaalt(u.convert(hoy)); 
+				} else {
+					this.medios.setFechaact(u.convert(hoy)); 
 				}
 				binder.writeBean(this.medios);
 				if (validarCampos()) {
+					
+					
 					mediosService.update(this.medios);
 					Notification.show("Medios actualizado correctamente.");
 					clearForm();
@@ -280,5 +297,8 @@ public class MediosView extends Div {
 		}
 		return salida;
 	}
+	
+	
+	
 	
 }

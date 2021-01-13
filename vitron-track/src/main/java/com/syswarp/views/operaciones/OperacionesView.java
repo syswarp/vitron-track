@@ -23,11 +23,15 @@ import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog.ConfirmEvent;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -54,6 +58,7 @@ import com.vaadin.flow.component.textfield.TextField;
 @PageTitle("Operaciones")
 @CssImport("./styles/views/operaciones/operaciones-view.css")
 public class OperacionesView extends Div {
+	
 
 	 @Autowired
 	 ContenedoresRepository cr;
@@ -72,7 +77,11 @@ public class OperacionesView extends Div {
 
 	 
 	 private TextField filtro;
-	 private Button nuevo;
+	 
+		private Button filtrar = new Button("Filtrar");
+		private Button alta = new Button("Nueva Operacion");
+		private Button baja = new Button("Eliminar");
+
 	
     private Grid<Operaciones> grid = new Grid<>(Operaciones.class, false);
 
@@ -95,7 +104,8 @@ public class OperacionesView extends Div {
     private Operaciones operaciones;
 
     public OperacionesView(@Autowired OperacionesService operacionesService) {
-        setId("operaciones-view");
+    	baja.setEnabled(false);
+    	setId("operaciones-view");
         // Create UI
         SplitLayout splitLayout = new SplitLayout();
         splitLayout.setSizeFull();
@@ -135,11 +145,14 @@ public class OperacionesView extends Div {
                 Optional<Operaciones> operacionesFromBackend = operacionesService.get(event.getValue().getId());
                 // when a row is selected but the data is no longer available, refresh grid
                 if (operacionesFromBackend.isPresent()) {
+                	baja.setEnabled(true);
                     populateForm(operacionesFromBackend.get());
                 } else {
+                	baja.setEnabled(false);
                     refreshGrid();
                 }
             } else {
+            	baja.setEnabled(false);
                 clearForm();
             }
         });
@@ -168,19 +181,59 @@ public class OperacionesView extends Div {
                 if (this.operaciones == null) {
                     this.operaciones = new Operaciones();
                 }
+                
                 binder.writeBean(this.operaciones);
-
-                operacionesService.update(this.operaciones);
-                clearForm();
-                refreshGrid();
-                Notification.show("Operacion actualizada correctamente");
+            	if (validarCampos()) {
+                    operacionesService.update(this.operaciones);
+                    clearForm();
+                    refreshGrid();
+                    Notification.show("Operacion actualizada correctamente");
+            	} 
             } catch (ValidationException validationException) {
                 Notification.show("Ocurrio un problema mientras se intentaba actualizar la operacion");
             }
         });
 
-    }
+		// listerner para escuchar el boton de altas
+		alta.addClickListener(e -> {
+			clearForm();
+			refreshGrid();
+			//Notification.show("Alta de Operacion");
+		});
 
+		// listerner para escuchar el filtro
+		filtrar.addClickListener(e -> {
+			if (filtro.getValue().equalsIgnoreCase("")) {
+				Notification.show("Eliminacion de Filtro");
+				grid.setItems(operacionesService.findAll(filtro.getValue()));
+			} else {
+				grid.setItems(operacionesService.findAll(filtro.getValue()));
+				refreshGrid();
+				Notification.show("Filtro aplicado");
+			}
+		});
+
+		// listener para escuchar el boton de bajas
+		baja.addClickListener(e -> {
+
+			ConfirmDialog dialog = new ConfirmDialog("Confirma eliminacion de registro",
+					"Esta seguro que quiere eliminar el item seleccionado?", "Cancelar",this::onCancelar, "Borrar", null);
+			dialog.setConfirmButtonTheme("error primary");
+			dialog.open();
+		    
+			operacionesService.delete(this.operaciones.getId());
+			Notification.show("Se elimino el Item");
+	     	refreshGrid();
+				
+		});
+
+        
+    }
+	public void onCancelar(ConfirmEvent l) {
+		   Notification.show("Cancelado"); 
+			//
+
+		}
     private void createEditorLayout(SplitLayout splitLayout) {
         Div editorLayoutDiv = new Div();
         editorLayoutDiv.setId("editor-layout");
@@ -222,7 +275,8 @@ public class OperacionesView extends Div {
         buttonLayout.setSpacing(true);
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(save, cancel);
+		baja.addThemeVariants(ButtonVariant.LUMO_ERROR);
+		buttonLayout.add(save, cancel, baja);
         editorLayoutDiv.add(buttonLayout);
     }
 
@@ -231,8 +285,33 @@ public class OperacionesView extends Div {
         wrapper.setId("grid-wrapper");
         wrapper.setWidthFull();
         splitLayout.addToPrimary(wrapper);
+    	createFiltroLayout(wrapper);
+
         wrapper.add(grid);
     }
+	private void createFiltroLayout(Div editorLayoutDiv) {
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		filtro = new TextField();
+		filtro.setPlaceholder("Indique ocurrencia");
+
+		Icon icon = new Icon(VaadinIcon.EDIT);
+		alta.getElement().appendChild(icon.getElement());
+
+		alta.getElement().getStyle().set("margin-left", "auto");
+		alta.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+		buttonLayout.setId("button-layout");
+		buttonLayout.setWidthFull();
+		buttonLayout.setSpacing(true);
+
+		filtrar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		Icon iconFilter = new Icon(VaadinIcon.FILTER);
+		filtrar.getElement().appendChild(iconFilter.getElement());
+
+		
+		buttonLayout.add(filtro, filtrar, alta);
+		editorLayoutDiv.add(buttonLayout);
+	}
 
     private void refreshGrid() {
         grid.select(null);
@@ -331,7 +410,6 @@ public class OperacionesView extends Div {
         // Apply the filter to grid's data provider. TextField value is never null
        // filtro.addValueChangeListener(event -> dataProvider.setFilter(event.getValue()));
 
-        nuevo = new Button("Nueva Agencia");
         //nuevo.addStyleName(ValoTheme.BUTTON_PRIMARY);
         //nuevo.setIcon(VaadinIcons.PLUS_CIRCLE);
         //nuevo.addClickListener(click -> viewLogic.nuevo());
@@ -346,6 +424,14 @@ public class OperacionesView extends Div {
         return topLayout;
     }
 
-    
+	private boolean validarCampos() {
+		boolean salida = true;
+		if(observaciones.getValue()==null || observaciones.getValue().trim().equals("")) {
+			Notification.show("El campo observaciones no puede quedar vacio");
+			salida = false;
+		}
+		return salida;
+	}
+	 
     
 }
