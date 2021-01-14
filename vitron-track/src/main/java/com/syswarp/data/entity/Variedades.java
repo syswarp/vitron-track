@@ -22,8 +22,10 @@ public class Variedades extends AbstractEntity {
     private String usuarioact;
     private Date fechaalt;
     private Date fechaact;
+    private String imgname;
+    private byte[] img;
 
-    @OneToMany(mappedBy = "variedades", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "variedades", cascade = CascadeType.ALL)
     private Set<Variedades> variedades = new HashSet<>(); 
     
 
@@ -66,6 +68,18 @@ public class Variedades extends AbstractEntity {
 		this.variedades = variedades;
 	}
 
+    public String getImgname() {
+		return imgname;
+	}
+	public void setImgname(String imgname) {
+		this.imgname = imgname;
+	}
+	public byte[] getImg() {
+		return img;
+	}
+	public void setImg(byte[] img) {
+		this.img = img;
+	}
 
 
 }

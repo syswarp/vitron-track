@@ -3,6 +3,7 @@ package com.syswarp.data.service;
 import com.syswarp.data.entity.Medios;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,5 +37,10 @@ public class MediosService extends CrudService<Medios, Integer> {
 			return getRepository().search(stringFilter) ;
 		}
 	}
+	
+	public Optional<Medios> findById(Integer id) {
+			return getRepository().findById(id)  ;
+	}
+	
 
 }

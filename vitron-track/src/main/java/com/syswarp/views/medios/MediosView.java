@@ -1,5 +1,6 @@
 package com.syswarp.views.medios;
 
+import java.util.List;
 import java.util.Objects;
 import com.syswarp.Utiles;
 import java.util.Optional;
@@ -33,6 +34,10 @@ import com.vaadin.flow.router.Route;
 //import com.vaadin.icons.VaadinIcons;
 //import com.vaadin.ui.themes.ValoTheme;
 
+import de.codecamp.vaadin.components.messagedialog.MessageDialog;
+
+//import de.steinwedel.messagebox.MessageBox;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import org.vaadin.reports.PrintPreviewReport;
@@ -41,6 +46,7 @@ import com.syswarp.views.main.MainView;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 
 @Route(value = "medios", layout = MainView.class)
@@ -58,6 +64,7 @@ public class MediosView extends Div {
 	private Button filtrar = new Button("Filtrar");
 	private Button alta = new Button("Nuevo Medio");
 	private Button baja = new Button("Eliminar");
+	private Button audit = new Button("...");
 
 	private BeanValidationBinder<Medios> binder;
 
@@ -68,7 +75,7 @@ public class MediosView extends Div {
 	public MediosView(@Autowired MediosService mediosService) {
 		setId("medios-view");
 		baja.setEnabled(false);
-
+		audit.setEnabled(false);
 		
 		// Create UI
 		SplitLayout splitLayout = new SplitLayout();
@@ -84,13 +91,12 @@ public class MediosView extends Div {
 		// grid.addColumn("idmedio").setAutoWidth(true);
 		grid.addColumn("id").setHeader("Codigo").setWidth("100px"); // .setAutoWidth(true);
 		grid.addColumn("medio").setAutoWidth(true);
-	
-		/* por si quiero agregar un icono o imagen
-		grid.addComponentColumn( item-> { Icon icon = VaadinIcon.CHECK_CIRCLE.create(); 
-		  return icon;
-		   } );
-		*/
-		
+
+		/*
+		 * por si quiero agregar un icono o imagen grid.addComponentColumn( item-> {
+		 * Icon icon = VaadinIcon.CHECK_CIRCLE.create(); return icon; } );
+		 */
+
 		grid.setDataProvider(new CrudServiceDataProvider<>(mediosService));
 		grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 		grid.setHeightFull();
@@ -102,20 +108,20 @@ public class MediosView extends Div {
 				// when a row is selected but the data is no longer available, refresh grid
 				if (mediosFromBackend.isPresent()) {
 					baja.setEnabled(true);
+					audit.setEnabled(true);
 					populateForm(mediosFromBackend.get());
 				} else {
 					baja.setEnabled(false);
-					
+					audit.setEnabled(false);
 					refreshGrid();
 				}
 			} else {
 				baja.setEnabled(false);
+				audit.setEnabled(false);
 				clearForm();
 			}
 		});
 
-		
-		
 		// Configure Form
 		binder = new BeanValidationBinder<>(Medios.class);
 
@@ -134,14 +140,13 @@ public class MediosView extends Div {
 				Utiles u = new Utiles();
 				if (this.medios == null) {
 					this.medios = new Medios();
-					this.medios.setFechaalt(u.convert(hoy)); 
+					this.medios.setFechaalt(u.convert(hoy));
 				} else {
-					this.medios.setFechaact(u.convert(hoy)); 
+					this.medios.setFechaact(u.convert(hoy));
 				}
 				binder.writeBean(this.medios);
 				if (validarCampos()) {
-					
-					
+
 					mediosService.update(this.medios);
 					Notification.show("Medios actualizado correctamente.");
 					clearForm();
@@ -156,7 +161,7 @@ public class MediosView extends Div {
 		alta.addClickListener(e -> {
 			clearForm();
 			refreshGrid();
-			//Notification.show("Alta de Medio");
+			// Notification.show("Alta de Medio");
 		});
 
 		// listerner para escuchar el filtro
@@ -174,22 +179,80 @@ public class MediosView extends Div {
 		// listener para escuchar el boton de bajas
 		baja.addClickListener(e -> {
 
-			ConfirmDialog dialog = new ConfirmDialog("Confirma eliminacion de registro",
-					"Esta seguro que quiere eliminar el item seleccionado?", "Cancelar",this::onCancelar, "Borrar", null);
-			dialog.setConfirmButtonTheme("error primary");
-			dialog.open();
-		    
-			mediosService.delete(this.medios.getId());
-			Notification.show("Se elimino el Item");
-	     	refreshGrid();
-				
+			/*
+			 * ConfirmDialog dialog = new ConfirmDialog("Confirma eliminacion de registro",
+			 * "Esta seguro que quiere eliminar el item seleccionado?",
+			 * "Cancelar",this::onCancelar, "Borrar", null);
+			 * dialog.setConfirmButtonTheme("error primary"); dialog.open();
+			 */
+
+			MessageDialog messageDialog = new MessageDialog()
+					.setTitle("Eliminacion de registro", VaadinIcon.EDIT.create())
+					.setMessage("Esta seguro que quiere eliminar el registro seleccionado?");
+			messageDialog.addButton().text("Eliminar").primary()
+					.onClick(ev -> mediosService.delete(this.medios.getId())).closeOnClick();
+			messageDialog.addButtonToLeft().text("Cancelar").tertiary().onClick(ev -> Notification.show("Cancelado."))
+					.closeOnClick();
+
+			messageDialog.open();
+
+			// mediosService.delete(this.medios.getId());
+			// Notification.show("Se elimino el Item");
+			refreshGrid();
+
 		});
 
-	}
 
+		// listener para escuchar el boton de auditorias
+		audit.addClickListener(e -> {
+			
+		Optional<Medios> m=	mediosService.findById(this.medios.getId());
+			String usuarioalt = m.get().getUsuarioalt();
+			String usuarioact = m.get().getUsuarioact();
+			String fechaalt = m.get().getFechaalt().toString();
+			String fechaact = m.get().getFechaact().toString();
+			
+			if (usuarioalt==null) usuarioalt = "NO CARGADO"; 
+			if (usuarioact==null) usuarioact = "NO CARGADO"; 
+			if (fechaalt==null) fechaalt = "NO CARGADA"; 
+			if (fechaact==null) fechaact = "NO CARGADA"; 
+
+			
+			String mensaje = "Usuario que dio de alta el registro: "+usuarioalt+"\n";
+			mensaje +="Usuario que modifico por ultima vez: "+usuarioact+"\n";
+			mensaje +="Fecha de alta : "+fechaalt+"\n";
+			mensaje +="Fecha ultima modificacion : "+fechaact+"\n";
+			
+			MessageDialog dialog = new MessageDialog();
+			dialog.setTitle("Auditoria", VaadinIcon.CALENDAR_USER.create());
+			dialog.setMessage("Presione el boton detalle para ver la auditoria del item seleccionado");
+
+			dialog.addButtonToLeft().text("Detalle").title("Tooltip").icon(VaadinIcon.ARROW_DOWN)
+			    .toggleDetails();
+			dialog.addButtonToLeft().text("Terminar").tertiary().closeOnClick();
+	
+			TextArea detailsText = new TextArea();
+			detailsText.setWidthFull();
+			detailsText.setMaxHeight("30em");
+			detailsText.setReadOnly(true);
+			detailsText.setValue( mensaje );
+			dialog.getDetails().add(detailsText);
+			dialog.open();
+			
+			
+			// mediosService.delete(this.medios.getId());
+			// Notification.show("Se elimino el Item");
+			refreshGrid();
+
+		});
+
+	
+	}
+	
+	
 
 	public void onCancelar(ConfirmEvent l) {
-	   Notification.show("Cancelado"); 
+		Notification.show("Cancelado");
 		//
 
 	}
@@ -225,7 +288,9 @@ public class MediosView extends Div {
 		cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 		save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 		baja.addThemeVariants(ButtonVariant.LUMO_ERROR);
-		buttonLayout.add(save, cancel, baja);
+		audit.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+		buttonLayout.add(save, cancel, baja, audit);
 		buttonLayoutDiv.add(buttonLayout);
 	}
 
@@ -260,7 +325,6 @@ public class MediosView extends Div {
 		Icon iconFilter = new Icon(VaadinIcon.FILTER);
 		filtrar.getElement().appendChild(iconFilter.getElement());
 
-		
 		buttonLayout.add(filtro, filtrar, alta);
 		editorLayoutDiv.add(buttonLayout);
 	}
@@ -279,26 +343,22 @@ public class MediosView extends Div {
 		binder.readBean(this.medios);
 
 	}
-    
-	
-	private  void reporte(ListDataProvider<Medios> dataProvider, @Autowired MediosService mediosService) {
+
+	private void reporte(ListDataProvider<Medios> dataProvider, @Autowired MediosService mediosService) {
 
 		PrintPreviewReport<Medios> report = new PrintPreviewReport<>(Medios.class);
 		report.setItems(mediosService.findAll());
-		//addComponent(report);
-		
+		// addComponent(report);
+
 	}
-	
+
 	private boolean validarCampos() {
 		boolean salida = true;
-		if(medio.getValue()==null || medio.getValue().trim().equals("")) {
+		if (medio.getValue() == null || medio.getValue().trim().equals("")) {
 			Notification.show("El campo medio no puede quedar vacio");
 			salida = false;
 		}
 		return salida;
 	}
-	
-	
-	
-	
+
 }

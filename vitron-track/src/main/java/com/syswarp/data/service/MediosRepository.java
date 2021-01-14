@@ -12,9 +12,9 @@ public interface MediosRepository extends JpaRepository<Medios, Integer> {
 
 	@Query("select c from Medios c " +
 		      "where lower(c.medio) like lower(concat('%', :searchTerm, '%') )  or cast( c.id as string ) = :searchTerm    ") // 
-
-
 		    List<Medios> search(@Param("searchTerm") String searchTerm); // 
+	        
+	       
 
 
 }

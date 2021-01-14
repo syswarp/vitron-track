@@ -1,6 +1,7 @@
 package com.syswarp.views.variedades;
 
 
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -23,6 +24,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -42,6 +44,9 @@ import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.UploadI18N;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 
 @Route(value = "variedades", layout = MainView.class)
 @PageTitle("Variedades")
@@ -187,8 +192,25 @@ public class VariedadesView extends Div {
 		FormLayout formLayout = new FormLayout();
 
 		variedad = new TextField("Variedad");
-		Component[] fields = new Component[] { variedad };
+		
+		// upload de archivo
+		MemoryBuffer memoryBuffer = new MemoryBuffer();
+		Upload fv = new Upload(memoryBuffer);
+        fv.setVisible(true);
+		//fv.setI18n(SetEspanol());
+        
+		fv.addFinishedListener(e -> {
+		    InputStream is = memoryBuffer.getInputStream();
+		    // read the contents of the buffered memory
+		    // from inputStream
+		});
+		
+		// fin upload de archivo
+		
+		Component[] fields = new Component[] { variedad, fv };
 
+		
+		
 		for (Component field : fields) {
 			((HasStyle) field).addClassName("full-width");
 		}
@@ -279,5 +301,46 @@ public class VariedadesView extends Div {
 		}
 		return salida;
 	}
+
+	
+	
+	private UploadI18N  SetEspanol() {
+	    final UploadI18N uploadI18N = new UploadI18N();
+	  //general error
+		uploadI18N.setError( new UploadI18N.Error() );
+		uploadI18N.getError().setFileIsTooBig( "Archivo demasiado grande" );
+		uploadI18N.getError().setIncorrectFileType( "Error en el tipo de archivo" );
+		uploadI18N.getError().setTooManyFiles( "Se seleccionaron demasiados Archivos" );
+
+		//add files
+		uploadI18N.setAddFiles( new UploadI18N.AddFiles() );
+		uploadI18N.getAddFiles().setOne( "Seleccionar Archivo" );
+		uploadI18N.getAddFiles().setMany( "Seleccionar Archivos" );
+
+		//uploading
+		uploadI18N.setUploading( new UploadI18N.Uploading() );
+		//uploading errors
+		uploadI18N.getUploading().setError( new UploadI18N.Uploading.Error() );
+		uploadI18N.getUploading().getError().setForbidden( "Acceso denegado" );
+		uploadI18N.getUploading().getError().setServerUnavailable( "El servidor no esta disponible" );
+		uploadI18N.getUploading().getError().setUnexpectedServerError( "Error repentino del servidor" );
+		//uploading status
+		uploadI18N.getUploading().setStatus( new UploadI18N.Uploading.Status() );
+		uploadI18N.getUploading().getStatus().setConnecting("Conectando...");
+		uploadI18N.getUploading().getStatus().setHeld("Esperando...");
+		uploadI18N.getUploading().getStatus().setProcessing("Procesando...");
+		uploadI18N.getUploading().getStatus().setStalled("Esperando...");
+		//uploading remaining time
+		uploadI18N.getUploading().setRemainingTime( new UploadI18N.Uploading.RemainingTime() );
+		uploadI18N.getUploading().getRemainingTime().setPrefix( "Se quedo" );
+		uploadI18N.getUploading().getRemainingTime().setUnknown( "Desconocido" );
+
+		uploadI18N.setCancel( "Cancelado" );
+       
+	    return uploadI18N;
+	}
+	
+
+	
 	
 }
