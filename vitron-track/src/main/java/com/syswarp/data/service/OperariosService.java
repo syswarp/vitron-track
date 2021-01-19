@@ -37,4 +37,9 @@ public class OperariosService extends CrudService<Operarios, Integer> {
 	}
 
 
+	public List<Operarios> findByUsuario(String userName, String clave) {
+		return getRepository().findUser(userName, clave);
+	}
+
+	
 }

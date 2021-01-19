@@ -26,12 +26,16 @@ import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.Version;
 
+import java.util.Iterator;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.syswarp.data.entity.Operarios;
-import com.syswarp.data.service.AuthService;
+import com.syswarp.data.service.OperacionesService;
 //import com.syswarp.data.service.AuthService;
 //import com.syswarp.data.service.AuthService.AuthException;
+import com.syswarp.data.service.OperariosRepository;
 
 
 @Route(value = "Login")
@@ -40,35 +44,19 @@ import com.syswarp.data.service.AuthService;
 //@RouteAlias(value="")
 public class LoginView extends Div {
 	private final VerticalLayout layout = new VerticalLayout();
+	 @Autowired
+	 OperariosRepository ore;
 	
-	
-	public LoginView(AuthService authService) {
+	public LoginView() {
     	//setId("login-view");
-     
-	 TextField username = new TextField("Username");
-     PasswordField password = new PasswordField("Password");		
-	 add(new H1("Vitron"),username, password
-			 , new Button("Login", event -> { 
-				 try {
-				 authService.autenticar(username.getValue(), password.getValue());
-				 UI.getCurrent().navigate("operaciones");
-				 } catch(AuthService.AuthException e) {
-					 Notification.show("Credenciales Invalidas");
-				 }
-			 } 
-					 
-					 ) 
-			 
-			 );	
-	/*	
+
+		
     	LoginForm component = new LoginForm();
     	component.setI18n(SetEspanol());
     	component.addLoginListener(e -> {
     	    boolean isAuthenticated = Autenticar(e);
     	    if (isAuthenticated) {
-    	    	// set el usuario 
-    	    	//VaadinSession.getCurrent().setAttribute(usuario, value);
-    	    	
+                  	    	
     	    	 navigateToMainPage();
     	    	
     	    } else {
@@ -80,7 +68,6 @@ public class LoginView extends Div {
     	
     	add(component);
     	
-    	*/
     	
     	/*
         TextField usuario = new TextField("Usuario");
@@ -101,7 +88,24 @@ public class LoginView extends Div {
 	}
 
 	private boolean Autenticar(LoginEvent e) {
-		return true;
+		// en el evento por parametro vienen los datos suficientes para hacer la autenticacion
+	    // aca tengo que aprovechar a guardar en sesion el usuario si es que esta ok
+		boolean salida = false;
+		String usuario = e.getUsername();
+		String clave = e.getPassword();
+		if(usuario.toLowerCase().equalsIgnoreCase("admin") && clave.toLowerCase().equalsIgnoreCase("admin")) salida = true; // por ahora dejo un salvo conducto
+		
+		// resta encriptar la clave aca y al momento de grabar o hacer update dentro de OperariosView.
+		
+		
+		List<Operarios> op = ore.findUser(usuario, clave);
+		Iterator it = op.iterator();
+		if(it.hasNext()) return true;
+		
+		//  valido contra la base de datos
+		
+		
+		return salida;
 	}
 
 	private LoginI18n SetEspanol() {

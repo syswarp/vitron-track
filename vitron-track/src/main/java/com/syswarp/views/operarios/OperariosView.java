@@ -25,6 +25,7 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import com.syswarp.views.main.MainView;
@@ -112,6 +113,9 @@ public class OperariosView extends Div {
             try {
                 if (this.operarios == null) {
                     this.operarios = new Operarios();
+                	//String md5Hex = DigestUtils.sha256Hex(clave.getValue());
+                	//clave.setValue(md5Hex);
+                	// todo, tengo que ver como se cambia la clave en realidad y hacer un desarrollo para eso.
                 }
                 binder.writeBean(this.operarios);
                 if (validarCampos()) {
