@@ -6,5 +6,7 @@
 :host {
   display: block;
   padding: var(--lumo-space-m) var(--lumo-space-l)
+  background-color: #ffebeb;
  }
 
+ 

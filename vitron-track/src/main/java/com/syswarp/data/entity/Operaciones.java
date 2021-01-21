@@ -32,9 +32,11 @@ public class Operaciones extends AbstractEntity {
 	private String usuarioact;
     private Date fechaalt;
     private Date fechaact;
+    
+    private Double cantidad;
  
     
-    // contenedores
+	// contenedores
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idcontenedor")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -136,6 +138,13 @@ public class Operaciones extends AbstractEntity {
 	}
 	public void setMultiplicaciones(Multiplicaciones multiplicaciones) {
 		this.multiplicaciones = multiplicaciones;
+	}
+
+    public Double getCantidad() {
+		return cantidad;
+	}
+	public void setCantidad(Double cantidad) {
+		this.cantidad = cantidad;
 	}
 
 	

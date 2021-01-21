@@ -49,9 +49,10 @@ public class LoginView extends Div {
 	
 	public LoginView() {
     	//setId("login-view");
-
+		
 		
     	LoginForm component = new LoginForm();
+    	
     	component.setI18n(SetEspanol());
     	component.addLoginListener(e -> {
     	    boolean isAuthenticated = Autenticar(e);
@@ -69,15 +70,7 @@ public class LoginView extends Div {
     	add(component);
     	
     	
-    	/*
-        TextField usuario = new TextField("Usuario");
-        PasswordField clave = new PasswordField("Clave");
-        
-        add(new H1("Bienvenido"), usuario, clave, new Button("Acceder", 
-        		event->{Autenticar( usuario.getValue(), clave.getValue() );
-				} ) );
-        */
-        
+         
     }
 
 	private void navigateToMainPage() {
@@ -125,6 +118,7 @@ public class LoginView extends Div {
 	    i18n.setAdditionalInformation(
 	        "Espacio para informacion adicional"
 	            + "... ");
+	    
 	    return i18n;
 	}
 	

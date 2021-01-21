@@ -15,6 +15,7 @@ import com.syswarp.data.service.ContenedoresRepository;
 import com.syswarp.data.service.ContenedoresService;
 import com.syswarp.data.service.MediosRepository;
 import com.syswarp.data.service.MultiplicacionesRepository;
+import com.syswarp.data.service.OperacionesRepository;
 import com.syswarp.data.service.OperacionesService;
 import com.syswarp.data.service.OperariosRepository;
 import com.syswarp.data.service.VariedadesRepository;
@@ -51,6 +52,7 @@ import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import com.syswarp.views.main.MainView;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 
@@ -68,6 +70,10 @@ public class OperacionesView extends Div {
 
 	 @Autowired
 	 OperariosRepository or;
+
+	 @Autowired
+	 OperacionesRepository ore;
+	 
 	 
 	 @Autowired
 	 VariedadesRepository vr;
@@ -77,7 +83,6 @@ public class OperacionesView extends Div {
 
 	 
 	 private TextField filtro;
-	 
 		private Button filtrar = new Button("Filtrar");
 		private Button alta = new Button("Nueva Operacion");
 		private Button baja = new Button("Eliminar");
@@ -95,6 +100,7 @@ public class OperacionesView extends Div {
     private ComboBox<Multiplicaciones> multiplicaciones;
     private ComboBox<Medios> medios;
     private TextArea observaciones;
+    private NumberField cantidad = new NumberField();
 
     private Button cancel = new Button("Cancelar");
     private Button save = new Button("Guardar");
@@ -134,7 +140,7 @@ public class OperacionesView extends Div {
         //grid.addColumn("idmultiplicacion").setAutoWidth(true);
       //  grid.addColumn("idmedio").setAutoWidth(true);
         grid.addColumn("observaciones").setAutoWidth(true);
-        
+        grid.addColumn("cantidad").setAutoWidth(true);
         grid.setDataProvider(new CrudServiceDataProvider<>(operacionesService));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.setHeightFull();
@@ -251,12 +257,17 @@ public class OperacionesView extends Div {
         operarios = new ComboBox("Operario");
         multiplicaciones = new ComboBox("Multiplicacion");
         observaciones = new TextArea("Observaciones");
+        cantidad = new NumberField("Cantidad");
+        cantidad.setValue(1d);
+        cantidad.setHasControls(true);
+        cantidad.setMin(1);
+        cantidad.setMax(5000);
         
         observaciones.getStyle().set("maxHeight", "150px");
         //observaciones.setHeightFull();
        
         Component[] fields = new Component[]{ fecha, contenedores, medios, variedades, operarios, multiplicaciones,
-                 observaciones};
+                 cantidad,observaciones};
 
         for (Component field : fields) {
             ((HasStyle) field).addClassName("full-width");
@@ -433,5 +444,5 @@ public class OperacionesView extends Div {
 		return salida;
 	}
 	 
-    
+	
 }
